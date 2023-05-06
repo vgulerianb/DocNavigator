@@ -1,6 +1,10 @@
 import { load } from "cheerio";
 import axios from "axios";
 import { encode } from "gpt-3-encoder";
+import { Configuration, OpenAIApi } from "openai";
+import { createClient } from "@supabase/supabase-js";
+const { v4: uuidv6 } = require("uuid");
+
 const CHUNK_SIZE = 200;
 
 const handler = async (req, res) => {
@@ -10,14 +14,16 @@ const handler = async (req, res) => {
   const request = { ...params, ...queryParams, ...bodyParams };
   const chunkedData = [];
   const data = [];
-  for (let i = 0; i < 2; i++) {
-    console.log(i, request.urls?.[i]);
+  const project_id = uuidv6();
+  const toFetch = request.urls?.length > 2 ? 2 : request.urls?.length;
+  for (let i = 0; i < toFetch; i++) {
+    console.log("i", i);
     const content = await getContent(request.urls?.[i]);
     const chunkedContentData = await getChunks(content);
     chunkedData.push(chunkedContentData);
-    data.push({ ...content, chunks: chunkedContentData });
+    data.push({ id: project_id, ...chunkedContentData });
   }
-  console.log({ chunkedData, data });
+  await generateEmbeddings(data);
   res.status(200).json({ error: "loading" });
 };
 
@@ -33,7 +39,7 @@ const getContent = async (url) => {
   };
   try {
     const html = await axios.get(url).catch((e) => {
-      console.log(e);
+      console.log("html", url);
     });
     const $ = load(html.data);
     pageContent.title = $("meta[property='og:title']").attr("content");
@@ -110,9 +116,56 @@ const getChunks = async (contentDetails) => {
       }
     }
   }
-  const chunkedContentData = {
-    ...contentDetails,
-    chunks: dataChunks,
-  };
-  return chunkedContentData;
+  contentDetails.chunks = dataChunks;
+  return contentDetails;
+};
+
+const generateEmbeddings = async (data) => {
+  const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
+  );
+  try {
+    const creationStatus = await supabase
+      .from("projects")
+      .insert({
+        project_name: "Vikrant's project",
+        project_id: data?.[0]?.id,
+        created_by: "Vikrant",
+      })
+      .select("*");
+    if (!creationStatus?.error)
+      for (let i = 0; i < data.length; i++) {
+        const currentData = data[i];
+        for (let j = 0; j < currentData?.chunks?.length; j++) {
+          const chunk = currentData.chunks[j];
+          const embeddingResponse = await openai.createEmbedding({
+            model: "text-embedding-ada-002",
+            input: chunk.content,
+          });
+          const [{ embedding }] = embeddingResponse.data.data;
+          await supabase
+            .from("embeddings")
+            .insert({
+              content_title: chunk.content_title,
+              content_url: chunk.content_url,
+              content: chunk.content,
+              content_tokens: chunk.content_tokens,
+              embedding: embedding,
+              project_id: currentData.id,
+            })
+            .select("*");
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // promise works for it has error when you embedding stuff, might be read limited thing. it will wait 1 second and try again
+        }
+      }
+  } catch (e) {
+    console.log(e);
+  }
+  return;
 };
