@@ -20,6 +20,7 @@
     "eslint-config-next": "13.4.1",
     "eventsource-parser": "^1.0.0",
     "gpt-3-encoder": "^1.1.4",
+    "jsonwebtoken": "^9.0.0",
     "next": "13.4.1",
     "openai": "^3.2.1",
     "postcss": "8.4.23",

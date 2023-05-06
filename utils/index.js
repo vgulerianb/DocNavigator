@@ -3,6 +3,11 @@ import axios from "axios";
 import { encode } from "gpt-3-encoder";
 import { Configuration, OpenAIApi } from "openai";
 import { createClient } from "@supabase/supabase-js";
+const crypto = require("crypto"),
+  algorithm = "aes-256-ctr",
+  password = "d6F3Efeq";
+const jwtSecret = "VG";
+const jwt = require("jsonwebtoken");
 
 const CHUNK_SIZE = 200;
 const supabaseClient = createClient(
@@ -145,4 +150,30 @@ export const generateEmbeddings = async (data) => {
     console.log(e);
   }
   return;
+};
+
+export const decrypt = (text) => {
+  let decipher = crypto.createDecipher(algorithm, password);
+  let dec = decipher.update(text, "hex", "utf8");
+  dec += decipher.final("utf8");
+  return dec;
+};
+
+export const generateToken = (data) => {
+  //JID - Unique id for jwt token
+  data["jid"] =
+    data["id"] +
+    "_" +
+    Math.round(Math.random() * 10000) +
+    "_" +
+    new Date().getTime();
+  let token = jwt.sign(data, jwtSecret, { expiresIn: 30000 });
+  return { token: token, jid: data["jid"] };
+};
+
+export const encrypt = (text) => {
+  let cipher = crypto.createCipher(algorithm, password);
+  let crypted = cipher.update(text, "utf8", "hex");
+  crypted += cipher.final("hex");
+  return crypted;
 };
