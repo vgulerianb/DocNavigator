@@ -3,7 +3,12 @@ import axios from "axios";
 import { encode } from "gpt-3-encoder";
 import { Configuration, OpenAIApi } from "openai";
 import { createClient } from "@supabase/supabase-js";
+
 const CHUNK_SIZE = 200;
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
+);
 
 export const getContent = async (url) => {
   let pageContent = {
@@ -101,12 +106,8 @@ export const generateEmbeddings = async (data) => {
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
-  );
   try {
-    const creationStatus = await supabase
+    const creationStatus = await supabaseClient
       .from("projects")
       .insert({
         project_name: "Vikrant's project",
@@ -124,7 +125,7 @@ export const generateEmbeddings = async (data) => {
             input: chunk.content,
           });
           const [{ embedding }] = embeddingResponse.data.data;
-          await supabase
+          await supabaseClient
             .from("embeddings")
             .insert({
               content_title: chunk.content_title,

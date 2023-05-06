@@ -1,4 +1,4 @@
-import { getChunks, getContent, generateEmbeddings } from "../../app/utils";
+import { getChunks, getContent, generateEmbeddings } from "../../utils";
 
 const { v4: uuidv6 } = require("uuid");
 
