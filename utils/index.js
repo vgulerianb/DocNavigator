@@ -5,8 +5,8 @@ import { Configuration, OpenAIApi } from "openai";
 import { createClient } from "@supabase/supabase-js";
 const crypto = require("crypto"),
   algorithm = "aes-256-ctr",
-  password = "d6F3Efeq";
-const jwtSecret = "VG";
+  password = process.env.APP_SECRET ?? "";
+const jwtSecret = process.env.APP_SECRET ?? "";
 const jwt = require("jsonwebtoken");
 
 const CHUNK_SIZE = 200;
