@@ -65,7 +65,7 @@ const OpenAIstream = async (prompt: string) => {
         {
           role: "system",
           content:
-            "You are a helpful assistant that answers queries. Response in 3-5 sentences and in markdown format.",
+            "You are a helpful assistant that answers queries. Response in 3-5 sentences and in markdown format. Try to be as helpful as possible and return information in simple and accurate terms.",
         },
         {
           role: "user",
