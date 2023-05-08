@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 
 export default function Dashboard() {
-  const [newProjectModal, setNewProjectModal] = useState(true);
+  const [newProjectModal, setNewProjectModal] = useState(false);
   const router = useRouter();
+  const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
@@ -42,9 +43,34 @@ export default function Dashboard() {
           ""
         )}
         <div className="p-[64px] ">
-          <span>Your Projects</span>
+          {projects?.length ? (
+            <div>
+              <span className="flex justify-between items-center">
+                Your Projects
+              </span>{" "}
+              <button className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]">
+                Create a new project
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
           <div className="flex flex-wrap gap-[16px] mt-[32px]">
-            {Array(7)
+            {!projects?.length ? (
+              <div className="h-full w-full grid items-center justify-center py-[15%]">
+                <div className="flex flex-col max-w-[350px] items-center bg-gray-800 p-[32px] rounded-md shadow-sm">
+                  <span className="text-3xl text-center">
+                    You don't have any projects yet.
+                  </span>
+                  <button className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]">
+                    Create a new project
+                  </button>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+            {/* {Array(7)
               .fill("")
               ?.map((val, key) => (
                 <div
@@ -58,7 +84,7 @@ export default function Dashboard() {
                     Project Description Project Descript
                   </span>
                 </div>
-              ))}
+              ))} */}
           </div>
         </div>
       </section>
