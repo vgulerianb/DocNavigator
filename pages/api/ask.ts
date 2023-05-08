@@ -12,10 +12,12 @@ const supabaseClient = createClient(
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { query, sources } = (await req.json()) as {
+    const { query, sources, projectId } = (await req.json()) as {
       query: string;
       sources?: boolean;
+      projectId?: string;
     };
+    if (!projectId) return new Response("Error", { status: 500 });
     const response = await fetch(`https://api.openai.com/v1/embeddings`, {
       method: "POST",
       headers: {
@@ -32,12 +34,14 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: chunks, error } = await supabaseClient.rpc(
       "embeddings_search",
       {
+        project_id: projectId,
         query_embedding: embedding,
         similarity_threshold: 0.5,
         match_count: 3,
       }
     );
     if (error) {
+      console.log(error);
       return new Response("Error", { status: 500 });
     }
     const prompt = `
