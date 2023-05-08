@@ -1,11 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 
 export default function Dashboard() {
   const [newProjectModal, setNewProjectModal] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
