@@ -47,8 +47,13 @@ export default function Dashboard() {
             <div>
               <span className="flex justify-between items-center">
                 Your Projects
-              </span>{" "}
-              <button className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]">
+              </span>
+              <button
+                onClick={() => {
+                  setNewProjectModal(true);
+                }}
+                className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]"
+              >
                 Create a new project
               </button>
             </div>
@@ -62,7 +67,12 @@ export default function Dashboard() {
                   <span className="text-3xl text-center">
                     You don't have any projects yet.
                   </span>
-                  <button className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]">
+                  <button
+                    onClick={() => {
+                      setNewProjectModal(true);
+                    }}
+                    className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]"
+                  >
                     Create a new project
                   </button>
                 </div>

@@ -25,14 +25,13 @@ export const getContent = async (url) => {
   };
   try {
     const html = await axios.get(url).catch((e) => {
-      console.log("html", url);
+      console.log("html", url, e);
     });
     const $ = load(html.data);
     pageContent.title = $("meta[property='og:title']").attr("content");
     pageContent.url = url;
     let content = "";
     $("h1, h2, h3, span,p").each((i, el) => {
-      //   filter out html tags
       content += (el?.children?.[0]?.data ?? " ") + " ";
     });
     let cleanedText = content
@@ -106,7 +105,7 @@ export const getChunks = async (contentDetails) => {
   return contentDetails;
 };
 
-export const generateEmbeddings = async (data) => {
+export const generateEmbeddings = async (data, meta) => {
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -115,9 +114,9 @@ export const generateEmbeddings = async (data) => {
     const creationStatus = await supabaseClient
       .from("projects")
       .insert({
-        project_name: "Vikrant's project",
+        project_name: meta?.projectName,
         project_id: data?.[0]?.id,
-        created_by: "Vikrant",
+        created_by: meta?.userEmail,
       })
       .select("*");
     if (!creationStatus?.error)

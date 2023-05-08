@@ -4,8 +4,10 @@ import { useState } from "react";
 export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
   const [mode, setMode] = useState<"sitemap" | "list" | "csv">("sitemap");
   const [urls, setUrls] = useState<string[]>([]);
+  const [name, setName] = useState<string>("");
   const [urlList, setUrlList] = useState<string>("");
   const [sitemapUrl, setSitemapUrl] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getUrls = (file: File) => {
     const reader = new FileReader();
@@ -30,14 +32,22 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
   };
 
   const createProject = () => {
-    console.log({ urls });
+    setLoading(true);
     axios
-      .post("/api/project", { urls })
+      .post("/api/project", { projectName: name, urls })
       .then((res) => {
-        console.log({ res });
+        if (res?.data?.success) {
+          onClose();
+        } else {
+          alert("Something went wrong");
+        }
       })
       .catch((err) => {
         console.log({ err });
+        alert("Something went wrong");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -77,38 +87,58 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
               </svg>
             </button>
           </div>
-          <div className="p-6 flex gap-[16px] items-center">
-            <div
-              onClick={() => {
-                setMode("sitemap");
-              }}
-              className={`${
-                mode === "sitemap" ? "border-blue-600 bg-blue-600/20" : ""
-              } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
-            >
-              <span className="font-bold">Use Sitemap</span>
+          <div className="flex flex-col p-6">
+            <div className="mb-[16px]">
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Project Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter project name"
+                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
             </div>
-            <div
-              onClick={() => {
-                setMode("list");
-              }}
-              className={`${
-                mode === "list" ? "border-blue-600 bg-blue-600/20" : ""
-              } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
-            >
-              <span className="font-bold">List of websites</span>
-            </div>
-            <div
-              onClick={() => {
-                setMode("csv");
-              }}
-              className={`${
-                mode === "csv" ? "border-blue-600 bg-blue-600/20" : ""
-              } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
-            >
-              <span className="font-bold">Upload CSV</span>
-            </div>
+            <div className=" flex gap-[16px] items-center">
+              <div
+                onClick={() => {
+                  setMode("sitemap");
+                }}
+                className={`${
+                  mode === "sitemap" ? "border-blue-600 bg-blue-600/20" : ""
+                } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
+              >
+                <span className="font-bold">Use Sitemap</span>
+              </div>
+              <div
+                onClick={() => {
+                  setMode("list");
+                }}
+                className={`${
+                  mode === "list" ? "border-blue-600 bg-blue-600/20" : ""
+                } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
+              >
+                <span className="font-bold">List of websites</span>
+              </div>
+              <div
+                onClick={() => {
+                  setMode("csv");
+                }}
+                className={`${
+                  mode === "csv" ? "border-blue-600 bg-blue-600/20" : ""
+                } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
+              >
+                <span className="font-bold">Upload CSV</span>
+              </div>
+            </div>{" "}
           </div>
+
           <div className="p-6">
             {mode === "sitemap" ? (
               <div className="flex">
@@ -156,15 +186,21 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
           </div>
           <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button
+              disabled={loading || !urls?.length || !name}
               onClick={() => {
                 createProject();
               }}
               type="button"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className={`text-white ${
+                loading || !urls?.length || !name
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-gray-800"
+              } focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center `}
             >
-              Create
+              {loading ? "Creating..." : "Create"}
             </button>
             <button
+              onClick={onClose}
               type="button"
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
