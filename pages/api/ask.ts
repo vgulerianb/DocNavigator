@@ -31,19 +31,20 @@ const handler = async (req: Request): Promise<Response> => {
       {
         query_embedding: embedding,
         similarity_threshold: 0.5,
-        match_count: 2,
+        match_count: 3,
       }
     );
     if (error) {
       return new Response("Error", { status: 500 });
     }
-    // return new Response(JSON.stringify(chunks), { status: 200 });
-
     const prompt = `
-    Use the following text to answer the question: ${query}
+    Use the following text to answer the question.Question is "${query}"
     ${chunks.map((chunk: { content: string }) => chunk.content).join("\n")}
     `;
-    const stream = await OpenAIstream(prompt);
+    console.log("chunks", chunks);
+    const stream = chunks?.length
+      ? await OpenAIstream(prompt)
+      : "Not able to find any answer. Please try again with a different question.";
     return new Response(stream, { status: 200 });
   } catch (e) {
     return new Response("Error", { status: 500 });
@@ -53,6 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
 export default handler;
 
 const OpenAIstream = async (prompt: string) => {
+  console.log("prompt", prompt);
   const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
     method: "POST",
     headers: {
