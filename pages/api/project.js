@@ -11,7 +11,7 @@ const handler = async (req, res) => {
   const data = [];
   const project_id = uuidv6();
   const userEmail = "vguleria1108@gmail.com"; // todo get from token
-  if (!request?.name?.trim())
+  if (!request?.projectName?.trim())
     return res.status(400).json({ success: false, message: "Invalid request" });
   const toFetch = request.urls?.length > 1000 ? 1000 : request.urls?.length;
   for (let i = 0; i < toFetch; i++) {
@@ -20,7 +20,10 @@ const handler = async (req, res) => {
     chunkedData.push(chunkedContentData);
     data.push({ id: project_id, ...chunkedContentData });
   }
-  await generateEmbeddings(data, { projectName: request?.name, userEmail });
+  await generateEmbeddings(data, {
+    projectName: request?.projectName,
+    userEmail,
+  });
   res.status(200).json({ success: true });
 };
 
