@@ -12,7 +12,10 @@ const supabaseClient = createClient(
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { query } = (await req.json()) as { query: string };
+    const { query, sources } = (await req.json()) as {
+      query: string;
+      sources?: boolean;
+    };
     const response = await fetch(`https://api.openai.com/v1/embeddings`, {
       method: "POST",
       headers: {
@@ -41,9 +44,19 @@ const handler = async (req: Request): Promise<Response> => {
     Use the following text to answer the question.Question is "${query}"
     ${chunks.map((chunk: { content: string }) => chunk.content).join("\n")}
     `;
-    console.log("chunks", chunks);
+
     const stream = chunks?.length
-      ? await OpenAIstream(prompt)
+      ? await OpenAIstream(
+          prompt,
+          sources
+            ? chunks?.map((chunk: { content_url: any; content_title: any }) => {
+                return {
+                  url: chunk.content_url,
+                  title: chunk.content_title,
+                };
+              })
+            : undefined
+        )
       : "Not able to find any answer. Please try again with a different question.";
     return new Response(stream, { status: 200 });
   } catch (e) {
@@ -53,8 +66,13 @@ const handler = async (req: Request): Promise<Response> => {
 
 export default handler;
 
-const OpenAIstream = async (prompt: string) => {
-  console.log("prompt", prompt);
+const OpenAIstream = async (
+  prompt: string,
+  sources?: {
+    url: string;
+    title: string;
+  }[]
+) => {
   const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
     method: "POST",
     headers: {
@@ -91,8 +109,11 @@ const OpenAIstream = async (prompt: string) => {
       const onParse: any = (event: { type: string; data: any }) => {
         if (event.type === "event") {
           const data = event.data;
-
           if (data === "[DONE]") {
+            if (sources)
+              controller.enqueue(
+                encoder.encode(`+Sources+${JSON.stringify(sources)}`)
+              );
             controller.close();
             return;
           }
