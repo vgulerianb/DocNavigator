@@ -34,11 +34,11 @@ export const getContent = async (url) => {
     $("h1, h2, h3, span,p").each((i, el) => {
       content += (el?.children?.[0]?.data ?? " ") + " ";
     });
-    let cleanedText = content
-      .replace(/\s+/g, " ")
-      .replace(/\.([a-zA-Z])/g, ". $1");
-    pageContent.content = cleanedText;
-    pageContent.tokens = encode(cleanedText).length;
+    // let cleanedText = content
+    //   .replace(/\s+/g, " ")
+    //   .replace(/\.([a-zA-Z])/g, ". $1");
+    pageContent.content = content;
+    pageContent.tokens = encode(content).length;
   } catch (e) {
     console.log(e);
   }
