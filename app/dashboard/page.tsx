@@ -1,7 +1,8 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 
@@ -9,11 +10,21 @@ export default function Dashboard() {
   const [newProjectModal, setNewProjectModal] = useState(false);
   const router = useRouter();
   const [projects, setProjects] = useState<any[]>([]);
+  const query = useSearchParams();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
       router.push("/");
+    } else {
+      axios
+        .get("/api/project")
+        .then((res) => {
+          setProjects(res?.data?.data);
+        })
+        .catch(() => {
+          alert("Something went wrong");
+        });
     }
   }, []);
 
@@ -44,58 +55,74 @@ export default function Dashboard() {
         )}
         <div className="p-[64px] ">
           {projects?.length ? (
-            <div>
-              <span className="flex justify-between items-center">
-                Your Projects
-              </span>
-              <button
-                onClick={() => {
-                  setNewProjectModal(true);
-                }}
-                className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]"
-              >
-                Create a new project
-              </button>
-            </div>
-          ) : (
-            ""
-          )}
-          <div className="flex flex-wrap gap-[16px] mt-[32px]">
-            {!projects?.length ? (
-              <div className="h-full w-full grid items-center justify-center py-[15%]">
-                <div className="flex flex-col max-w-[350px] items-center bg-gray-800 p-[32px] rounded-md shadow-sm">
-                  <span className="text-3xl text-center text-white">
-                    You don't have any projects yet.
+            <div className="flex items-center justify-between">
+              {!query?.get("id") ? (
+                <>
+                  <span className="flex justify-between items-center text-2xl">
+                    Your Projects
                   </span>
                   <button
                     onClick={() => {
                       setNewProjectModal(true);
                     }}
-                    className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]"
+                    className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold  py-[8px] px-[16px]"
                   >
                     Create a new project
                   </button>
+                </>
+              ) : (
+                <span
+                  className="flex justify-between items-center text-sm cursor-pointer"
+                  onClick={() => {
+                    router.push(`/dashboard`);
+                  }}
+                >
+                  {`<- Back to projects`}
+                </span>
+              )}
+            </div>
+          ) : (
+            ""
+          )}
+          {!query?.get("id") ? (
+            <div className="flex flex-wrap gap-[16px] mt-[32px]">
+              {!projects?.length ? (
+                <div className="h-full w-full grid items-center justify-center py-[15%]">
+                  <div className="flex flex-col max-w-[350px] items-center bg-gray-800 p-[32px] rounded-md shadow-sm">
+                    <span className="text-3xl text-center text-white">
+                      You don't have any projects yet.
+                    </span>
+                    <button
+                      onClick={() => {
+                        setNewProjectModal(true);
+                      }}
+                      className="bg-gray-900 rounded-md text-white text-[12px] w-fit font-bold mt-[16px] py-[8px] px-[16px]"
+                    >
+                      Create a new project
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              ""
-            )}
-            {/* {Array(7)
-              .fill("")
-              ?.map((val, key) => (
+              ) : (
+                ""
+              )}
+              {projects?.map((val, key) => (
                 <div
                   key={key}
                   draggable
-                  className="flex flex-col rounded-md bg-gray-800 w-[240px] h-[128px] p-[8px] overflow-hidden cursor-pointer"
+                  onClick={() => {
+                    router.push(`/dashboard?id=${val?.project_id}`);
+                  }}
+                  className="flex flex-col rounded-md bg-gray-800 w-[240px] p-[8px] overflow-hidden cursor-pointer"
                 >
-                  <span className="font-bold text-[18px]">Project Name</span>
-                  <span className="text-[12px]">
-                    Project Description Project Description Project Description
-                    Project Description Project Descript
+                  <span className="font-bold text-[12px]">
+                    {val?.project_name}
                   </span>
                 </div>
-              ))} */}
-          </div>
+              ))}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </section>
     </div>
