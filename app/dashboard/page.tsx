@@ -64,7 +64,7 @@ export default function Dashboard() {
             {!projects?.length ? (
               <div className="h-full w-full grid items-center justify-center py-[15%]">
                 <div className="flex flex-col max-w-[350px] items-center bg-gray-800 p-[32px] rounded-md shadow-sm">
-                  <span className="text-3xl text-center">
+                  <span className="text-3xl text-center text-white">
                     You don't have any projects yet.
                   </span>
                   <button

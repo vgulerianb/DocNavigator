@@ -31,14 +31,21 @@ const handler = async (req, res) => {
       console.log("content", urlSet);
     });
   } else {
-    await axios.get(url).then((response) => {
-      response.data.split("<loc>").forEach((url) => {
-        if (url.includes("https://")) {
-          urlSet.add(url.split("</loc>")[0]);
-        }
+    await axios
+      .get(url)
+      .then((response) => {
+        response.data.split("<loc>").forEach((url) => {
+          if (url.includes("https://")) {
+            urlSet.add(url.split("</loc>")[0]);
+          }
+        });
+      })
+      .catch((e) => {
+        console.log("sitemap", url, e);
       });
-    });
   }
+  if (urlSet?.size === 0)
+    return res.status(400).json({ success: false, message: "No urls found" });
   res.status(200).json({ success: false, data: Array.from(urlSet) });
 };
 

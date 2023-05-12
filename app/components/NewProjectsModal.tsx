@@ -25,19 +25,26 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
   const getSitemapUrls = () => {
     fetch(`/api/getUrls?url=${sitemapUrl}`)
       .then((res) => res.json())
-      .then((data: { data: string[] }) => {
-        console.log({ data });
+      .then((data: { message: string; success: boolean; data: string[] }) => {
+        if (!data?.success) alert(data?.message);
         const urls = data.data as string[];
         setUrls(urls ?? []);
+      })
+      .catch(() => {
+        alert("Something went wrong");
       });
   };
 
   const getNavUrls = () => {
     fetch(`/api/getUrls?url=${navUrl}&type=scrape`)
       .then((res) => res.json())
-      .then((data: { data: string[] }) => {
+      .then((data: { message: string; success: boolean; data: string[] }) => {
+        if (!data?.success) alert(data?.message);
         const urls = data.data as string[];
         setUrls(urls ?? []);
+      })
+      .catch(() => {
+        alert("Something went wrong");
       });
   };
 
@@ -106,6 +113,7 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                 Project Name
               </label>
               <input
+                autoFocus
                 type="text"
                 name="name"
                 id="name"
@@ -124,7 +132,9 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "sitemap" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold text-[12px]">Use Sitemap</span>
+                <span className="font-bold text-[12px] text-white">
+                  Use Sitemap
+                </span>
                 <span className="text-[8px]"></span>
               </div>
               <div
@@ -135,8 +145,12 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "nav" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit flex flex-col rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold text-[12px]">Use Navigation</span>
-                <span className="text-[8px]">For Docusaurus | Gitlab etc</span>
+                <span className="font-bold text-[12px] text-white">
+                  Use Navigation
+                </span>
+                <span className="text-[8px]  text-white">
+                  For Docusaurus | Gitlab etc
+                </span>
               </div>
               <div
                 onClick={() => {
@@ -146,8 +160,10 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "list" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold text-[12px]">List of websites</span>
-                <span className="text-[8px]"></span>
+                <span className="font-bold text-[12px]  text-white">
+                  List of websites
+                </span>
+                <span className="text-[8px] "></span>
               </div>
               <div
                 onClick={() => {
@@ -157,7 +173,9 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "csv" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold text-[12px]">Upload CSV</span>
+                <span className="font-bold text-[12px]  text-white">
+                  Upload CSV
+                </span>
                 <span className="text-[8px]"></span>
               </div>
             </div>{" "}

@@ -26,7 +26,7 @@ const handler = async (req, res) => {
     }
     return res.status(200).json({ success: true, data: projectsData });
   } else {
-    if (!request?.projectName?.trim())
+    if (!request?.projectName?.trim() || !request?.urls?.length)
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
