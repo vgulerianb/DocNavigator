@@ -25,7 +25,8 @@ const handler = async (req, res) => {
         ) {
           urlSet.add(el.attribs.href);
         } else if (!el.attribs.href?.includes("http")) {
-          urlSet.add(baseUrl + el.attribs.href);
+          const absoluteUrl = new URL(el.attribs.href, baseUrl).href;
+          urlSet.add(absoluteUrl);
         }
       console.log("content", urlSet);
     });

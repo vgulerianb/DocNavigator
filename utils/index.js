@@ -31,9 +31,10 @@ export const getContent = async (url) => {
     pageContent.title = $("meta[property='og:title']").attr("content");
     pageContent.url = url;
     let content = "";
-    $("h1, h2, h3, span,p").each((i, el) => {
+    $("h1, h2, h3, span ,p, code, pre").each((i, el) => {
       content += (el?.children?.[0]?.data ?? " ") + " ";
     });
+    console.log("content", content);
     // let cleanedText = content
     //   .replace(/\s+/g, " ")
     //   .replace(/\.([a-zA-Z])/g, ". $1");

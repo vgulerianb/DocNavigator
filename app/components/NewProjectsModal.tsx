@@ -2,12 +2,15 @@ import axios from "axios";
 import { useState } from "react";
 
 export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
-  const [mode, setMode] = useState<"sitemap" | "list" | "csv">("sitemap");
+  const [mode, setMode] = useState<"sitemap" | "list" | "csv" | "nav">(
+    "sitemap"
+  );
   const [urls, setUrls] = useState<string[]>([]);
   const [name, setName] = useState<string>("");
   const [urlList, setUrlList] = useState<string>("");
   const [sitemapUrl, setSitemapUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [navUrl, setNavUrl] = useState<string>("");
 
   const getUrls = (file: File) => {
     const reader = new FileReader();
@@ -20,13 +23,20 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
 
   //   get urls from sitemap
   const getSitemapUrls = () => {
-    fetch(sitemapUrl)
-      .then((res) => res.text())
-      .then((data) => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data, "text/xml");
-        const locs = xml.getElementsByTagName("loc");
-        const urls = Array.from(locs).map((loc) => loc.textContent) as string[];
+    fetch(`/api/getUrls?url=${sitemapUrl}`)
+      .then((res) => res.json())
+      .then((data: { data: string[] }) => {
+        console.log({ data });
+        const urls = data.data as string[];
+        setUrls(urls ?? []);
+      });
+  };
+
+  const getNavUrls = () => {
+    fetch(`/api/getUrls?url=${navUrl}&type=scrape`)
+      .then((res) => res.json())
+      .then((data: { data: string[] }) => {
+        const urls = data.data as string[];
         setUrls(urls ?? []);
       });
   };
@@ -114,7 +124,19 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "sitemap" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold">Use Sitemap</span>
+                <span className="font-bold text-[12px]">Use Sitemap</span>
+                <span className="text-[8px]"></span>
+              </div>
+              <div
+                onClick={() => {
+                  setMode("nav");
+                }}
+                className={`${
+                  mode === "nav" ? "border-blue-600 bg-blue-600/20" : ""
+                } flex-1 h-fit flex flex-col rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
+              >
+                <span className="font-bold text-[12px]">Use Navigation</span>
+                <span className="text-[8px]">For Docusaurus | Gitlab etc</span>
               </div>
               <div
                 onClick={() => {
@@ -124,7 +146,8 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "list" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold">List of websites</span>
+                <span className="font-bold text-[12px]">List of websites</span>
+                <span className="text-[8px]"></span>
               </div>
               <div
                 onClick={() => {
@@ -134,7 +157,8 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                   mode === "csv" ? "border-blue-600 bg-blue-600/20" : ""
                 } flex-1 h-fit rounded-md border border-gray-200 p-[16px] cursor-pointer hover:border-blue-600 hover:bg-blue-600/20`}
               >
-                <span className="font-bold">Upload CSV</span>
+                <span className="font-bold text-[12px]">Upload CSV</span>
+                <span className="text-[8px]"></span>
               </div>
             </div>{" "}
           </div>
@@ -152,6 +176,24 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
                 <button
                   onClick={() => {
                     getSitemapUrls();
+                  }}
+                  className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
+                >
+                  Get URLs
+                </button>
+              </div>
+            ) : mode === "nav" ? (
+              <div className="flex">
+                <input
+                  type="text"
+                  name="nav"
+                  onChange={(e) => setNavUrl(e.target.value)}
+                  className="bg-gray-50 flex-1 h-[48px] border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="https://example.com/docs"
+                />
+                <button
+                  onClick={() => {
+                    getNavUrls();
                   }}
                   className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
                 >
