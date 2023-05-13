@@ -6,11 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 
+const Menus = ["playground", "indexes", "conversations"];
+
 export default function Dashboard() {
   const [newProjectModal, setNewProjectModal] = useState(false);
   const router = useRouter();
   const [projects, setProjects] = useState<any[]>([]);
   const query = useSearchParams();
+  const [menu, setMenu] = useState<string>("playground");
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
@@ -53,9 +56,9 @@ export default function Dashboard() {
         ) : (
           ""
         )}
-        <div className="p-[64px] ">
+        <div className={!query?.get("id") ? "p-[64px]" : "h-full"}>
           {projects?.length ? (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-white">
               {!query?.get("id") ? (
                 <>
                   <span className="flex justify-between items-center text-2xl">
@@ -71,14 +74,7 @@ export default function Dashboard() {
                   </button>
                 </>
               ) : (
-                <span
-                  className="flex justify-between items-center text-sm cursor-pointer"
-                  onClick={() => {
-                    router.push(`/dashboard`);
-                  }}
-                >
-                  {`<- Back to projects`}
-                </span>
+                <></>
               )}
             </div>
           ) : (
@@ -112,16 +108,35 @@ export default function Dashboard() {
                   onClick={() => {
                     router.push(`/dashboard?id=${val?.project_id}`);
                   }}
-                  className="flex flex-col rounded-md bg-gray-800 w-[240px] p-[8px] overflow-hidden cursor-pointer"
+                  className="flex flex-col rounded-md bg-gray-800 w-[240px] p-[8px] overflow-hidden cursor-pointer border border-gray-600"
                 >
-                  <span className="font-bold text-[12px]">
+                  <span className="font-bold text-[12px] text-white ">
                     {val?.project_name}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            ""
+            <div className="h-full flex gap-[64px]">
+              <div className="w-[250px] bg-gray-800 h-full flex flex-col items-center pt-[24px] gap-[12px]">
+                {Menus.map((val, idx) => (
+                  <div
+                    draggable
+                    key={idx}
+                    onClick={() => {
+                      setMenu(val);
+                    }}
+                    className={`border ${
+                      val === menu ? "border-blue-400" : "border-gray-600"
+                    } hover:bg-blue-900/10 flex flex-col rounded-md bg-gray-900 w-[240px] px-[8px] py-[12px] overflow-hidden cursor-pointer`}
+                  >
+                    <span className="font-bold text-[12px] text-white capitalize">
+                      {val}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </section>
