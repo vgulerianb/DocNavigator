@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { createParser } from "eventsource-parser";
+import allowCors from "../../utils/allowCors";
 
 export const config = {
   runtime: "edge",
@@ -17,7 +18,8 @@ const handler = async (req: Request): Promise<Response> => {
       sources?: boolean;
       projectId?: string;
     };
-    if (!projectId) return new Response("Error", { status: 500 });
+    if (!projectId)
+      return allowCors(req, new Response("Error", { status: 500 }));
     const response = await fetch(`https://api.openai.com/v1/embeddings`, {
       method: "POST",
       headers: {
@@ -42,7 +44,7 @@ const handler = async (req: Request): Promise<Response> => {
     );
     if (error) {
       console.log(error);
-      return new Response("Error", { status: 500 });
+      return allowCors(req, new Response("Error", { status: 500 }));
     }
     const prompt = `
     Use the following text to answer the question.Question is "${query}"
@@ -62,9 +64,9 @@ const handler = async (req: Request): Promise<Response> => {
             : undefined
         )
       : "Not able to find any answer. Please try again with a different question.";
-    return new Response(stream, { status: 200 });
+    return allowCors(req, new Response(stream, { status: 200 }));
   } catch (e) {
-    return new Response("Error", { status: 500 });
+    return allowCors(req, new Response("Error", { status: 500 }));
   }
 };
 
