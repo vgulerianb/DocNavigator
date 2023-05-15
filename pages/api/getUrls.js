@@ -10,6 +10,7 @@ const handler = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid request" });
   const url = request?.url;
   let urlSet = new Set();
+  console.log("url", url);
   if (request?.type === "scrape") {
     const html = await axios.get(url).catch((e) => {
       console.log("html", url, e);
@@ -44,6 +45,7 @@ const handler = async (req, res) => {
         console.log("sitemap", url, e);
       });
   }
+  console.log("urlSet", urlSet);
   if (urlSet?.size === 0)
     return res.status(400).json({ success: false, message: "No urls found" });
   res.status(200).json({ success: false, data: Array.from(urlSet) });
