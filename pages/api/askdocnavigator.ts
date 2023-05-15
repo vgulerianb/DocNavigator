@@ -31,6 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
         input: query,
       }),
     });
+    console.log({ query });
     const json = await response.json();
     const embedding = json.data?.[0]?.embedding;
     const { data: chunks, error } = await supabaseClient.rpc(
@@ -98,7 +99,7 @@ const OpenAIstream = async (
           content: prompt,
         },
       ],
-      max_tokens: 150,
+      max_tokens: 750,
       temperature: 0.0,
       stream: true,
     }),
