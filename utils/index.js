@@ -177,3 +177,22 @@ export const encrypt = (text) => {
   crypted += cipher.final("hex");
   return crypted;
 };
+
+export const verifyToken = async (req) => {
+  let token = req.headers["x-access-token"] || req.headers["authorization"];
+  let email = "";
+  if (token) {
+    jwt.verify(token, jwtSecret, async (err, decoded) => {
+      if (!err && decoded.email) {
+        req.token = decoded;
+        email = decoded.email;
+      }
+    });
+  } else {
+    return {
+      success: false,
+      message: "Authentication error: Auth token is not supplied",
+    };
+  }
+  return { success: email !== "", email: email };
+};

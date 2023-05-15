@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
+import { SearchComponent } from "doc-navigator";
 
 const Menus = ["playground", "indexes", "conversations"];
 
@@ -14,14 +15,20 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<any[]>([]);
   const query = useSearchParams();
   const [menu, setMenu] = useState<string>("playground");
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
       router.push("/");
     } else {
       axios
-        .get("/api/project")
+        .get("/api/project", {
+          headers: {
+            Authorization: `${accessToken}`,
+          },
+        })
         .then((res) => {
           setProjects(res?.data?.data);
         })
@@ -86,7 +93,7 @@ export default function Dashboard() {
                 <div className="h-full w-full grid items-center justify-center py-[15%]">
                   <div className="flex flex-col max-w-[350px] items-center bg-gray-800 p-[32px] rounded-md shadow-sm">
                     <span className="text-3xl text-center text-white">
-                      You don't have any projects yet.
+                      {`  You don't have any projects yet.`}
                     </span>
                     <button
                       onClick={() => {
@@ -136,6 +143,10 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              <SearchComponent
+                url={"http://localhost:3004"}
+                projectId={"7ac7c4bd-1273-437b-9205-ba4db9e00116"}
+              />
             </div>
           )}
         </div>

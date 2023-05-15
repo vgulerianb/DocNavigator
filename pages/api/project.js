@@ -1,4 +1,9 @@
-import { getChunks, getContent, generateEmbeddings } from "../../utils";
+import {
+  getChunks,
+  getContent,
+  generateEmbeddings,
+  verifyToken,
+} from "../../utils";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseClient = createClient(
@@ -15,7 +20,10 @@ const handler = async (req, res) => {
   const chunkedData = [];
   let data = [];
   const project_id = uuidv6();
-  const userEmail = "vguleria1108@gmail.com"; // todo get from token
+  const user = await verifyToken(req, res);
+  if (!user.success)
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  const userEmail = user?.email;
   if (req.method === "GET") {
     const { data: projectsData, error } = await supabaseClient
       .from("projects")

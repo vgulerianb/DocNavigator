@@ -23,6 +23,7 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
 
   //   get urls from sitemap
   const getSitemapUrls = () => {
+    const accessToken = localStorage.getItem("access_token");
     fetch(`/api/getUrls?url=${sitemapUrl}`)
       .then((res) => res.json())
       .then((data: { message: string; success: boolean; data: string[] }) => {
@@ -51,7 +52,15 @@ export const NewProjectsModal = ({ onClose }: { onClose: () => void }) => {
   const createProject = () => {
     setLoading(true);
     axios
-      .post("/api/project", { projectName: name, urls })
+      .post(
+        "/api/project",
+        { projectName: name, urls },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("access_token")}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.success) {
           onClose();
