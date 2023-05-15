@@ -24,7 +24,7 @@ const handler = async (req: Request): Promise<Response> => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${process.env.OPENAI_API_KEY!}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY!}`,
       },
       body: JSON.stringify({
         model: "text-embedding-ada-002",
@@ -50,7 +50,6 @@ const handler = async (req: Request): Promise<Response> => {
     Use the following text to answer the question.Question is "${query}"
     ${chunks.map((chunk: { content: string }) => chunk.content).join("\n")}
     `;
-
     const stream = chunks?.length
       ? await OpenAIstream(
           prompt,
@@ -83,7 +82,7 @@ const OpenAIstream = async (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `${process.env.OPENAI_API_KEY ?? ""}`,
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
     },
     body: JSON.stringify({
       model: "gpt-3.5-turbo",

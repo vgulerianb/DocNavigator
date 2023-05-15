@@ -130,7 +130,7 @@ export const generateEmbeddings = async (data, meta) => {
             input: chunk.content,
           });
           const [{ embedding }] = embeddingResponse.data.data;
-          await supabaseClient
+          const insertStatus = await supabaseClient
             .from("embeddings")
             .insert({
               content_title: chunk.content_title,
@@ -141,7 +141,6 @@ export const generateEmbeddings = async (data, meta) => {
               project_id: currentData.id,
             })
             .select("*");
-
           await new Promise((resolve) => setTimeout(resolve, 1000));
           // promise works for it has error when you embedding stuff, might be read limited thing. it will wait 1 second and try again
         }
