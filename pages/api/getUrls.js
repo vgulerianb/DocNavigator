@@ -35,6 +35,7 @@ const handler = async (req, res) => {
     await axios
       .get(url)
       .then((response) => {
+        console.log("response", response.data);
         response.data.split("<loc>").forEach((url) => {
           if (url.includes("https://")) {
             urlSet.add(url.split("</loc>")[0]);
