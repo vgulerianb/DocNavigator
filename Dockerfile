@@ -1,20 +1,22 @@
 FROM node:lts as builder
+
 WORKDIR /docnavigator
-RUN touch .env
-COPY .env package.json yarn.lock ./
+
+COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
-WORKDIR /docnavigator
+
 COPY . .
 RUN yarn build
+
 FROM node:lts
+
 WORKDIR /docnavigator
 
-COPY --from=builder /docnavigator/node_modules ./node_modules
-COPY --from=builder /docnavigator/next.config.js ./
-COPY --from=builder /docnavigator/public ./public
-COPY --from=builder /docnavigator/.next ./.next
-COPY --from=builder /docnavigator/package.json ./package.json
-COPY --from=builder /docnavigator/.env ./.env
+COPY --from=builder /docnavigator .
+
+# Copy .env if it exists
+COPY --from=builder /docnavigator/.env* ./
 
 EXPOSE 3000
+
 CMD ["yarn", "start"]
