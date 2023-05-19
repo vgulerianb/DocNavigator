@@ -144,7 +144,7 @@ export default function Dashboard() {
                 ))}
               </div>
               <SearchComponent
-                url={"http://localhost:3007"}
+                url={window.location.origin}
                 projectId={"9b706ff2-9608-4b00-a866-16c6e860d50c"}
               />
             </div>
