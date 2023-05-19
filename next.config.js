@@ -1,8 +1,16 @@
 /** @type {import('next').NextConfig} */
 const cron = require("node-cron");
 
+let lastCron = 0;
 cron.schedule("* * * * *", function () {
-  console.log("Say scheduled hello" + new Date());
+  const currentTime = new Date().getTime();
+  if (currentTime - lastCron > 7000) {
+    lastCron = currentTime;
+    console.log("test cron", new Date());
+    fetch("https://api.quotable.io/random")
+      .then((res) => res.json())
+      .then((json) => console.log(json));
+  }
 });
 
 const nextConfig = {
@@ -12,7 +20,6 @@ const nextConfig = {
       // by next.js will be dropped. Doesn't make much sense, but how it is
       fs: false, // the solution
     };
-
     return config;
   },
 };
