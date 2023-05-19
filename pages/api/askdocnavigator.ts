@@ -90,9 +90,12 @@ const OpenAIstream = async (
       messages: [
         {
           role: "system",
-          content: `You are a helpful assistant that answers queries. Response in 3-5 sentences and in markdown format. Try to be as helpful as possible and return information in simple and accurate terms. If you are unsure and the answer
-            is not explicitly written in the documentation, say "Sorry, I don't know how to help with that."
-            Answer as markdown (including related code snippets if available):`,
+          content: `You are a very enthusiastic representative who loves
+          to help people! Given the following sections from the given
+          documentation, answer the question using only that information,
+          outputted in markdown format (including related code snippets if available). If you are unsure and the answer
+          is not explicitly written in the documentation, say
+          "Sorry, I don't know how to help with that.`,
         },
         {
           role: "user",
@@ -100,7 +103,7 @@ const OpenAIstream = async (
         },
       ],
       max_tokens: 750,
-      temperature: 0.0,
+      temperature: 0.5,
       stream: true,
     }),
   });

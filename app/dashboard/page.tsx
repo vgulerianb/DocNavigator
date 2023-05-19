@@ -144,8 +144,8 @@ export default function Dashboard() {
                 ))}
               </div>
               <SearchComponent
-                url={"http://localhost:3004"}
-                projectId={"7ac7c4bd-1273-437b-9205-ba4db9e00116"}
+                url={"http://localhost:3007"}
+                projectId={"9b706ff2-9608-4b00-a866-16c6e860d50c"}
               />
             </div>
           )}
