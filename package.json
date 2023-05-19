@@ -23,6 +23,7 @@
     "gpt-3-encoder": "^1.1.4",
     "jsonwebtoken": "^9.0.0",
     "next": "13.4.1",
+    "node-cron": "^3.0.2",
     "openai": "^3.2.1",
     "postcss": "8.4.23",
     "react": "18.2.0",

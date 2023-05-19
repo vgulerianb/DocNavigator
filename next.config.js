@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const cron = require("node-cron");
 
-module.exports = nextConfig
+cron.schedule("* * * * *", function () {
+  console.log("Say scheduled hello" + new Date());
+});
+
+const nextConfig = {};
+
+module.exports = nextConfig;
