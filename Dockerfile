@@ -1,5 +1,6 @@
 FROM node:lts as builder
 WORKDIR /docnavigator
+RUN touch .env
 COPY .env package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 WORKDIR /docnavigator
