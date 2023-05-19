@@ -31,7 +31,6 @@ const handler = async (req: Request): Promise<Response> => {
         input: query,
       }),
     });
-    console.log({ query });
     const json = await response.json();
     const embedding = json.data?.[0]?.embedding;
     const { data: chunks, error } = await supabaseClient.rpc(
@@ -55,6 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
       ? await OpenAIstream(
           prompt,
           query,
+          projectId,
           sources
             ? chunks?.map((chunk: { content_url: any; content_title: any }) => {
                 return {
@@ -76,12 +76,13 @@ export default handler;
 const OpenAIstream = async (
   prompt: string,
   query: string,
+  project_id: string,
   sources?: {
     url: string;
     title: string;
   }[]
 ) => {
-  console.log({ query });
+  let streamData = "";
   const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
     method: "POST",
     headers: {
@@ -119,10 +120,16 @@ const OpenAIstream = async (
 
   const stream = new ReadableStream({
     async start(controller) {
-      const onParse: any = (event: { type: string; data: any }) => {
+      const onParse: any = async (event: { type: string; data: any }) => {
         if (event.type === "event") {
           const data = event.data;
           if (data === "[DONE]") {
+            await supabaseClient.from("conversations").insert({
+              project_id: project_id,
+              query: query,
+              response: streamData,
+              meta: JSON.stringify(sources),
+            });
             if (sources)
               controller.enqueue(
                 encoder.encode(`+Sources+${JSON.stringify(sources)}`)
@@ -134,7 +141,7 @@ const OpenAIstream = async (
             const json = JSON.parse(data);
             const text = json.choices[0].delta.content;
             //choices is an array of objects. We want the first object in the array. delta is an object. content is a string
-            console.log({ text });
+            streamData += text || "";
             const queue = encoder.encode(text);
             controller.enqueue(queue);
           } catch (e) {
