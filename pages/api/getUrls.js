@@ -49,7 +49,9 @@ const handler = async (req, res) => {
   console.log("urlSet", urlSet);
   if (urlSet?.size === 0)
     return res.status(400).json({ success: false, message: "No urls found" });
-  res.status(200).json({ success: false, data: Array.from(urlSet) });
+  res
+    .status(200)
+    .json({ success: false, data: Array.from(urlSet)?.slice(0, 10) });
 };
 
 export default handler;

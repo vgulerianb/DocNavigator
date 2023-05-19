@@ -44,7 +44,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
     if (error) {
-      console.log(error);
+      console.log({ error });
       return allowCors(req, new Response("Error", { status: 500 }));
     }
     const prompt = `
@@ -54,6 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
     const stream = chunks?.length
       ? await OpenAIstream(
           prompt,
+          query,
           sources
             ? chunks?.map((chunk: { content_url: any; content_title: any }) => {
                 return {
@@ -74,11 +75,13 @@ export default handler;
 
 const OpenAIstream = async (
   prompt: string,
+  query: string,
   sources?: {
     url: string;
     title: string;
   }[]
 ) => {
+  console.log({ query });
   const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
     method: "POST",
     headers: {
@@ -131,6 +134,7 @@ const OpenAIstream = async (
             const json = JSON.parse(data);
             const text = json.choices[0].delta.content;
             //choices is an array of objects. We want the first object in the array. delta is an object. content is a string
+            console.log({ text });
             const queue = encoder.encode(text);
             controller.enqueue(queue);
           } catch (e) {

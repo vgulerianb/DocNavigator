@@ -15,10 +15,8 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<any[]>([]);
   const query = useSearchParams();
   const [menu, setMenu] = useState<string>("playground");
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
       router.push("/");
@@ -144,8 +142,8 @@ export default function Dashboard() {
                 ))}
               </div>
               <SearchComponent
-                url={window.location.origin}
-                projectId={"9b706ff2-9608-4b00-a866-16c6e860d50c"}
+                url={window?.location?.origin}
+                projectId={query?.get("id") || ""}
               />
             </div>
           )}
