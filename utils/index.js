@@ -2,7 +2,7 @@ import { load } from "cheerio";
 import axios from "axios";
 import { encode } from "gpt-3-encoder";
 import { Configuration, OpenAIApi } from "openai";
-import { createClient } from "@supabase/supabase-js";
+
 const crypto = require("crypto"),
   algorithm = "aes-256-ctr",
   password = process.env.APP_SECRET ?? "";
@@ -10,10 +10,6 @@ const jwtSecret = process.env.APP_SECRET ?? "";
 const jwt = require("jsonwebtoken");
 
 const CHUNK_SIZE = 200;
-const supabaseClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
-);
 
 export const getContent = async (url) => {
   let pageContent = {
@@ -106,20 +102,25 @@ export const getChunks = async (contentDetails) => {
   return contentDetails;
 };
 
-export const generateEmbeddings = async (data, meta) => {
+export const generateEmbeddings = async (prisma, data, meta) => {
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
   try {
-    const creationStatus = await supabaseClient
-      .from("projects")
-      .insert({
+    const creationStatus = await prisma.projects.create({
+      data: {
         project_name: meta?.projectName,
         project_id: data?.[0]?.id,
         created_by: meta?.userEmail,
-      })
-      .select("*");
+      },
+    });
+
+    if (creationStatus?.error?.code === "42501")
+      return {
+        error: true,
+        msg: "Seems like current database user doesn't have permission to execute this query. Please check your database user permission.",
+      };
     if (!creationStatus?.error)
       for (let i = 0; i < data.length; i++) {
         const currentData = data[i];
@@ -130,17 +131,7 @@ export const generateEmbeddings = async (data, meta) => {
             input: chunk.content,
           });
           const [{ embedding }] = embeddingResponse.data.data;
-          const insertStatus = await supabaseClient
-            .from("embeddings")
-            .insert({
-              content_title: chunk.content_title,
-              content_url: chunk.content_url,
-              content: chunk.content,
-              content_tokens: chunk.content_tokens,
-              embedding: embedding,
-              project_id: currentData.id,
-            })
-            .select("*");
+          await prisma.$queryRaw`Insert into embeddings (content_title, content_url, content, content_tokens, project_id, embedding) values (${chunk.content_title}, ${chunk.content_url}, ${chunk.content}, ${chunk.content_tokens}, ${currentData.id}, ${embedding})`;
           await new Promise((resolve) => setTimeout(resolve, 1000));
           // promise works for it has error when you embedding stuff, might be read limited thing. it will wait 1 second and try again
         }

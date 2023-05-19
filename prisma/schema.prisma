@@ -1,0 +1,52 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [uuid_ossp(map: "uuid-ossp", schema: "extensions"), vector(schema: "extensions")]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model embeddings {
+  id             BigInt                 @id @default(autoincrement())
+  content_title  String?
+  content_url    String?
+  content        String?
+  content_tokens BigInt?
+  project_id     String
+  embedding      Unsupported("vector")?
+  meta           String?
+  projects       projects               @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([embedding])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model projects {
+  id           BigInt       @default(autoincrement())
+  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
+  project_id   String       @unique
+  project_name String?
+  created_by   String?
+  status       String?
+  meta         String?
+  embeddings   embeddings[]
+  users        users?       @relation(fields: [created_by], references: [email], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id, project_id])
+}
+
+model users {
+  id         BigInt     @unique @default(autoincrement())
+  created_at DateTime?  @default(now()) @db.Timestamptz(6)
+  email      String     @unique
+  name       String?
+  password   String?
+  meta       String?
+  projects   projects[]
+
+  @@id([id, email])
+}

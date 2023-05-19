@@ -1,10 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import { decrypt, generateToken } from "../../utils";
-
-const supabaseClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
-);
+import { decrypt, generateToken, initDb } from "../../utils";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
   const params = req.params;
@@ -12,10 +8,15 @@ const handler = async (req, res) => {
   const bodyParams = req.body;
   const request = { ...params, ...queryParams, ...bodyParams };
   if (request?.email && request?.password) {
-    const { data } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("email", request.email);
+    const data = await prisma.users.findMany({
+      where: {
+        email: request.email,
+      },
+      select: {
+        password: true,
+        id: true,
+      },
+    });
     if (
       !(
         data?.length && request["password"] === decrypt(data?.[0]?.["password"])
@@ -29,7 +30,6 @@ const handler = async (req, res) => {
         success: true,
         token: generateToken({
           email: request.email,
-          id: data?.[0]?.["id"],
         }),
       });
     }

@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "initDb": "ts-node utils/initDb.js"
   },
   "dependencies": {
+    "@prisma/client": "^4.14.1",
     "@supabase/supabase-js": "^2.21.0",
     "@types/node": "20.0.0",
     "@types/react": "18.2.5",
@@ -26,10 +28,15 @@
     "node-cron": "^3.0.2",
     "openai": "^3.2.1",
     "postcss": "8.4.23",
+    "prisma": "^4.14.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "supabase": "^1.62.1",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
   }
 }

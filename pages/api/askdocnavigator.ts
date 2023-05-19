@@ -5,7 +5,7 @@ import allowCors from "../../utils/allowCors";
 export const config = {
   runtime: "edge",
 };
-
+// not using prisma as its a edge function and prisma needs proxy to work with edge
 const supabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
