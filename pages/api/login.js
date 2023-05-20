@@ -1,4 +1,4 @@
-import { decrypt, generateToken, initDb } from "../../utils";
+import { decrypt, generateToken } from "../../utils";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 

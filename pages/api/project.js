@@ -1,10 +1,4 @@
-import {
-  getChunks,
-  getContent,
-  generateEmbeddings,
-  verifyToken,
-  initDb,
-} from "../../utils";
+import { verifyToken } from "../../utils";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -68,23 +62,6 @@ const handler = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Error creating project" });
-    // const toFetch = request.urls?.length > 1000 ? 1000 : request.urls?.length;
-
-    // for (let i = 0; i < toFetch; i++) {
-    //   const content = await getContent(request.urls?.[i]);
-    //   const chunkedContentData = await getChunks(content);
-    //   chunkedData.push(chunkedContentData);
-    //   data.push({ id: project_id, ...chunkedContentData });
-    // }
-    // const insertStatus = await generateEmbeddings(prisma, data, {
-    //   projectName: request?.projectName,
-    //   userEmail,
-    // });
-
-    // if (insertStatus?.error)
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: insertStatus?.msg });
   }
 };
 

@@ -2,14 +2,15 @@
 const cron = require("node-cron");
 
 let lastCron = 0;
-cron.schedule("* * * * *", function () {
+cron.schedule("* * * * *", async function () {
   const currentTime = new Date().getTime();
-  if (currentTime - lastCron > 7000) {
+  if (currentTime - lastCron > 40000) {
     lastCron = currentTime;
-    console.log("test cron", new Date());
-    fetch("https://api.quotable.io/random")
+    fetch(process.env?.APP_URL + "/api/taskqueue")
       .then((res) => res.json())
-      .then((json) => console.log(json));
+      .then((data) => {
+        console.log("data", data);
+      });
   }
 });
 

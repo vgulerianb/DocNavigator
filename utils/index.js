@@ -23,7 +23,7 @@ export const getContent = async (url) => {
     const html = await axios.get(url).catch((e) => {
       console.log("html", url, e);
     });
-    const $ = load(html.data);
+    const $ = load(html?.data || "");
     pageContent.title = $("meta[property='og:title']").attr("content");
     pageContent.url = url;
     let content = "";
@@ -98,40 +98,32 @@ export const getChunks = async (contentDetails) => {
   return contentDetails;
 };
 
-export const generateEmbeddings = async (prisma, data, meta) => {
+export const generateEmbeddings = async (prisma, data) => {
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
   try {
-    const creationStatus = await prisma.projects.create({
-      data: {
-        project_name: meta?.projectName,
-        project_id: data?.[0]?.id,
-        created_by: meta?.userEmail,
-      },
-    });
+    for (let i = 0; i < data.length; i++) {
+      const currentData = data[i];
+      for (let j = 0; j < currentData?.chunks?.length; j++) {
+        const chunk = currentData.chunks[j];
+        const embeddingResponse = await openai.createEmbedding({
+          model: "text-embedding-ada-002",
+          input: chunk.content,
+        });
+        const [{ embedding }] = embeddingResponse.data.data;
 
-    if (creationStatus?.error?.code === "42501")
-      return {
-        error: true,
-        msg: "Seems like current database user doesn't have permission to execute this query. Please check your database user permission.",
-      };
-    if (!creationStatus?.error)
-      for (let i = 0; i < data.length; i++) {
-        const currentData = data[i];
-        for (let j = 0; j < currentData?.chunks?.length; j++) {
-          const chunk = currentData.chunks[j];
-          const embeddingResponse = await openai.createEmbedding({
-            model: "text-embedding-ada-002",
-            input: chunk.content,
-          });
-          const [{ embedding }] = embeddingResponse.data.data;
-          await prisma.$queryRaw`Insert into embeddings (content_title, content_url, content, content_tokens, project_id, embedding) values (${chunk.content_title}, ${chunk.content_url}, ${chunk.content}, ${chunk.content_tokens}, ${currentData.id}, ${embedding})`;
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          // promise works for it has error when you embedding stuff, might be read limited thing. it will wait 1 second and try again
-        }
+        await prisma.$queryRaw`Insert into embeddings (content_title, content_url, content, content_tokens, project_id, embedding) values (${chunk.content_title}, ${chunk.content_url}, ${chunk.content}, ${chunk.content_tokens}, ${currentData.id}, ${embedding})`;
+        await prisma.taskqueue.deleteMany({
+          where: {
+            url: chunk.content_url,
+          },
+        });
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // promise works for it has error when you embedding stuff, might be read limited thing. it will wait 1 second and try again
       }
+    }
   } catch (e) {
     console.log(e);
   }
