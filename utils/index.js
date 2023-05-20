@@ -9,7 +9,7 @@ const crypto = require("crypto"),
 const jwtSecret = process.env.APP_SECRET ?? "";
 const jwt = require("jsonwebtoken");
 
-const CHUNK_SIZE = 200;
+const CHUNK_SIZE = 350;
 
 export const getContent = async (url) => {
   let pageContent = {
@@ -30,10 +30,6 @@ export const getContent = async (url) => {
     $("h1, h2, h3, span ,p, code, pre").each((i, el) => {
       content += (el?.children?.[0]?.data ?? " ") + " ";
     });
-    console.log("content", content);
-    // let cleanedText = content
-    //   .replace(/\s+/g, " ")
-    //   .replace(/\.([a-zA-Z])/g, ". $1");
     pageContent.content = content;
     pageContent.tokens = encode(content).length;
   } catch (e) {
@@ -157,7 +153,7 @@ export const generateToken = (data) => {
     Math.round(Math.random() * 10000) +
     "_" +
     new Date().getTime();
-  let token = jwt.sign(data, jwtSecret, { expiresIn: 30000 });
+  let token = jwt.sign(data, jwtSecret, { expiresIn: 300000 });
   return { token: token, jid: data["jid"] };
 };
 

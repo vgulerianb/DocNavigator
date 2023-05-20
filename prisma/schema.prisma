@@ -33,7 +33,7 @@ model projects {
   meta          String?
   conversations conversations[]
   embeddings    embeddings[]
-  taskqueue     taskqueue?
+  taskqueue     taskqueue[]
 
   @@id([id, project_id])
 }
@@ -66,8 +66,8 @@ model conversations {
 model taskqueue {
   id         BigInt    @id @default(autoincrement())
   created_at DateTime? @default(now()) @db.Timestamptz(6)
-  url        String?
+  url        String?   @unique
   meta       String?
-  project_id String?   @unique
+  project_id String?
   projects   projects? @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction)
 }

@@ -43,24 +43,49 @@ const handler = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
-    const toFetch = request.urls?.length > 1000 ? 1000 : request.urls?.length;
-    for (let i = 0; i < toFetch; i++) {
-      const content = await getContent(request.urls?.[i]);
-      const chunkedContentData = await getChunks(content);
-      chunkedData.push(chunkedContentData);
-      data.push({ id: project_id, ...chunkedContentData });
-    }
-    const insertStatus = await generateEmbeddings(prisma, data, {
-      projectName: request?.projectName,
-      userEmail,
+    const creationStatus = await prisma.projects.create({
+      data: {
+        project_name: request?.projectName?.trim(),
+        project_id: project_id,
+        created_by: userEmail,
+        status: "processing",
+      },
     });
-
-    if (insertStatus?.error)
+    if (creationStatus?.id) {
+      await prisma.taskqueue
+        .createMany({
+          data: request?.urls?.map((url) => ({
+            url: url,
+            project_id: project_id,
+          })),
+          skipDuplicates: true,
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+      return res.status(200).json({ success: true });
+    } else
       return res
         .status(400)
-        .json({ success: false, message: insertStatus?.msg });
+        .json({ success: false, message: "Error creating project" });
+    // const toFetch = request.urls?.length > 1000 ? 1000 : request.urls?.length;
+
+    // for (let i = 0; i < toFetch; i++) {
+    //   const content = await getContent(request.urls?.[i]);
+    //   const chunkedContentData = await getChunks(content);
+    //   chunkedData.push(chunkedContentData);
+    //   data.push({ id: project_id, ...chunkedContentData });
+    // }
+    // const insertStatus = await generateEmbeddings(prisma, data, {
+    //   projectName: request?.projectName,
+    //   userEmail,
+    // });
+
+    // if (insertStatus?.error)
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: insertStatus?.msg });
   }
-  res.status(200).json({ success: true });
 };
 
 export default handler;

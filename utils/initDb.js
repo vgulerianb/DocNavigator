@@ -58,7 +58,7 @@ const initDb = async (prismaConn) => {
   await prisma.$queryRaw`CREATE UNIQUE INDEX "projects_project_id_key" ON "projects"("project_id");`;
   await prisma.$queryRaw`CREATE UNIQUE INDEX "users_id_key" ON "users"("id");`;
   await prisma.$queryRaw`CREATE UNIQUE INDEX "users_email_key" ON "users"("email");`;
-  await prisma.$queryRaw`CREATE UNIQUE INDEX "taskqueue_project_id_key" ON "taskqueue"("project_id");`;
+  await prisma.$queryRaw`CREATE UNIQUE INDEX "taskqueue_url_key" ON "taskqueue"("url");`;
   await prisma.$queryRaw`ALTER TABLE "embeddings" ADD CONSTRAINT "embeddings_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("project_id") ON DELETE NO ACTION ON UPDATE NO ACTION;`;
   await prisma.$queryRaw`ALTER TABLE "conversations" ADD CONSTRAINT "conversations_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("project_id") ON DELETE NO ACTION ON UPDATE NO ACTION;`;
   await prisma.$queryRaw`ALTER TABLE "taskqueue" ADD CONSTRAINT "taskqueue_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("project_id") ON DELETE NO ACTION ON UPDATE NO ACTION;`;
