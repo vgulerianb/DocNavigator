@@ -6,11 +6,12 @@ cron.schedule("* * * * *", async function () {
   const currentTime = new Date().getTime();
   if (currentTime - lastCron > 40000) {
     lastCron = currentTime;
-    fetch(process.env?.APP_URL + "/api/taskqueue")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("data", data);
-      });
+    if (process.env?.APP_URL)
+      fetch(process.env?.APP_URL + "/api/taskqueue")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("data", data);
+        });
   }
 });
 
