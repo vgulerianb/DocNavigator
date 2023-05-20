@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getChunks, getContent, generateEmbeddings } from "../../utils";
 const prisma = new PrismaClient();
-
+const urlLimit = 30;
 const handler = async (req, res) => {
   const params = req.params;
   const queryParams = req.query;
@@ -25,7 +25,7 @@ const handler = async (req, res) => {
       where: {
         project_id: project_id,
       },
-      take: 30,
+      take: urlLimit,
       select: {
         url: true,
       },
@@ -40,7 +40,7 @@ const handler = async (req, res) => {
         },
       });
     } else {
-      const toFetch = urls?.length > 2 ? 2 : urls?.length;
+      const toFetch = urls?.length > urlLimit ? urlLimit : urls?.length;
       for (let i = 0; i < toFetch; i++) {
         const content = await getContent(urls?.[i]?.url);
         const chunkedContentData = await getChunks(content);
