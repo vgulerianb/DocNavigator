@@ -20,6 +20,7 @@ const handler = async (req, res) => {
   if (projects?.length) {
     const random = Math.floor(Math.random() * projects?.length) + 1;
     project_id = project_id ? project_id : projects[random]?.project_id;
+    if (!project_id) return res.status(400).json({ success: false, data: [] });
     const urls = await prisma.taskqueue.findMany({
       where: {
         project_id: project_id,
