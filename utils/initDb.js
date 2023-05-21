@@ -10,6 +10,7 @@ const initDb = async (prismaConn) => {
     "content_url" TEXT,
     "content" TEXT,
     "content_tokens" BIGINT,
+    "url_id" TEXT,
     "project_id" TEXT NOT NULL,
     "embedding" vector (1536),
     "meta" TEXT,

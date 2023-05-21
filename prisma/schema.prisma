@@ -19,6 +19,7 @@ model embeddings {
   project_id     String
   embedding      Unsupported("vector")?
   meta           String?
+  url_id         String?
   projects       projects               @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
