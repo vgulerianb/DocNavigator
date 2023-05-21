@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { getChunks, getContent, generateEmbeddings } from "../../utils";
+import fs from "fs";
+import path from "path";
+
 const prisma = new PrismaClient();
 const urlLimit = 30;
 const handler = async (req, res) => {
@@ -8,17 +11,26 @@ const handler = async (req, res) => {
   const bodyParams = req.body;
   const request = { ...params, ...queryParams, ...bodyParams };
   let project_id = request?.project_id;
+  // TODO: improve this
+  const queuseStatus = await fs.readFileSync(
+    path.join(__dirname, "../../../../prisma/queuestatus"),
+    "utf8"
+  );
+  if (!queuseStatus?.includes("true"))
+    return res
+      .status(200)
+      .json({ success: true, data: [], msg: "queue is not running" });
   const projects = await prisma.projects.findMany({
     where: {
       status: "processing",
-      project_id: project_id,
+      project_id: project_id ? project_id : undefined,
     },
     take: 5,
   });
   const data = [];
   const chunkedData = [];
   if (projects?.length) {
-    const random = Math.floor(Math.random() * projects?.length) + 1;
+    const random = Math.floor(Math.random() * projects?.length);
     project_id = project_id ? project_id : projects[random]?.project_id;
     if (!project_id) return res.status(400).json({ success: false, data: [] });
     const urls = await prisma.taskqueue.findMany({
@@ -45,7 +57,6 @@ const handler = async (req, res) => {
         const content = await getContent(urls?.[i]?.url);
         const chunkedContentData = await getChunks(content);
         chunkedData.push(chunkedContentData);
-        console.log("project_id", project_id);
         data.push({
           id: project_id,
           ...chunkedContentData,
@@ -54,6 +65,10 @@ const handler = async (req, res) => {
       await generateEmbeddings(prisma, data);
     }
   } else {
+    await fs.writeFileSync(
+      path.join(__dirname, "../../../../prisma/queuestatus"),
+      "false"
+    );
     res.status(200).json({ success: true, data: [] });
   }
   res.status(200).json({ success: true, data: [] });

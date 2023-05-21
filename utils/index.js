@@ -114,7 +114,9 @@ export const generateEmbeddings = async (prisma, data) => {
         });
         const [{ embedding }] = embeddingResponse.data.data;
 
-        await prisma.$queryRaw`Insert into embeddings (content_title, content_url, content, content_tokens, project_id, embedding) values (${chunk.content_title}, ${chunk.content_url}, ${chunk.content}, ${chunk.content_tokens}, ${currentData.id}, ${embedding})`;
+        await prisma.$queryRaw`INSERT INTO embeddings (content_title, content_url, content, content_tokens, project_id, embedding)
+        VALUES (${chunk.content_title}, ${chunk.content_url}, ${chunk.content}, ${chunk.content_tokens}, ${currentData.id}, ${embedding})
+        ON CONFLICT (content, project_id) DO NOTHING;`;
         await prisma.taskqueue.deleteMany({
           where: {
             url: chunk.content_url,

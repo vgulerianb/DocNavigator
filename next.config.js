@@ -6,6 +6,7 @@ cron.schedule("* * * * *", async function () {
   const currentTime = new Date().getTime();
   if (currentTime - lastCron > 40000) {
     lastCron = currentTime;
+    console.log("running a task every minute", new Date());
     if (process.env?.APP_URL)
       fetch(process.env?.APP_URL + "/api/taskqueue")
         .then((res) => res.json())
