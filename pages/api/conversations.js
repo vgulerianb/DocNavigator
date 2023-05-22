@@ -24,6 +24,7 @@ const handler = async (req, res) => {
         query: true,
         response: true,
         created_at: true,
+        meta: true,
       },
     })
     .catch((error) => {

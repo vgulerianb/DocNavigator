@@ -11,6 +11,7 @@ export const ConversationsComponent = ({
   const [loading, setLoading] = useState(true);
   const [Conversations, setConversations] = useState<
     {
+      meta: string;
       created_at: string;
       query: string;
       response: string;
@@ -37,7 +38,7 @@ export const ConversationsComponent = ({
   return (
     <>
       <h1 className="font-bold text-white">Conversations</h1>
-      <div className="flex flex-col gap-[16px] overflow-scroll h-full">
+      <div className="flex flex-col gap-[16px] overflow-scroll h-full pb-[128px]">
         {loading ? (
           <div className="flex flex-col items-center gap-[8px] text-white mt-[64px]">
             <LoadingSvg />
@@ -46,14 +47,33 @@ export const ConversationsComponent = ({
         ) : (
           Conversations.map((val, idx) => (
             <div
-              className="w-full min-h-[64px] flex flex-col gap-[16px] bg-gray-800 rounded-md px-[16px] text-white"
+              className="w-full  flex flex-col gap-[16px] bg-gray-800 rounded-md p-[16px] text-white "
               key={idx}
             >
               <span className="text-white">Q. {val.query}</span>
               <span className="text-white">Ans. {val.response}</span>
-              <span className="text-white text-right">
-                {new Date(val.created_at).toLocaleString()}
+              <span
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "12px",
+                }}
+              >
+                Sources
               </span>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {JSON.parse(val?.meta ?? "")?.map(
+                  (source: any, idx: number) => (
+                    <a
+                      className="border p-[2px] rounded-sm max-w-[400px] whitespace-nowrap overflow-hidden text-ellipsis"
+                      key={idx}
+                      target="_blank"
+                      href={source?.url}
+                    >
+                      {source?.url}
+                    </a>
+                  )
+                )}
+              </div>
             </div>
           ))
         )}
