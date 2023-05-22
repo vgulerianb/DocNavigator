@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 import { ProjectsDetail } from "../components/ProjectsDetail";
-export const handleLogout = () => {
+const handleLogout = () => {
   localStorage.removeItem("access_token");
   window.location.href = "/";
 };

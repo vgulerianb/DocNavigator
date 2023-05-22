@@ -2,8 +2,8 @@ export const PlaygroundHolder = ({ project_id }: { project_id: string }) => (
   <div className="flex flex-col max-w-[500px]">
     <span className="text-[18px] text-white font-bold">Playground</span>
     <span className="text-gray-300">
-      Test out your component and customize it the way you want. This is
-      code-only so it won't save unless you copy the code with the settings.
+      {`Test out your component and customize it the way you want. This is
+      code-only so it won't save unless you copy the code with the settings.`}
     </span>
     <div className="w-full shrink-0 rounded-xl p-4 bg-gray-800/25 ring-1 ring-white/10 backdrop-blur mt-[40px]">
       <div className="absolute -top-px left-20 right-11 h-px bg-gradient-to-r from-primary/0 via-primary/70 to-primary/0" />
