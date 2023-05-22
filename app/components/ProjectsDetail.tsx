@@ -4,7 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import { PlaygroundHolder } from "./PlaygroundHolder";
 import { ProjectProcessingState } from "./ProjectProcessingState";
 
-const Menus = ["playground", "indexes", "conversations"];
+const Menus = [
+  "playground",
+  "indexes",
+  "conversations",
+  "reports",
+  "customize model",
+];
 export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
   const [menu, setMenu] = useState<string>("playground");
   const [isClient, setIsClient] = useState(false);
@@ -91,7 +97,9 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
               </div>
             </div>
           ) : (
-            ""
+            <div className="w-full h-full flex justify-center items-center text-[28px] text-white">
+              Coming Soon
+            </div>
           )}
         </div>
       </div>
