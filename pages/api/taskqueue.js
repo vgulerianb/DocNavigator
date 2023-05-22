@@ -12,7 +12,7 @@ const handler = async (req, res) => {
   const request = { ...params, ...queryParams, ...bodyParams };
   let project_id = request?.project_id;
   // TODO: improve this
-  const queuseStatus = await fs.readFileSync(
+  const queuseStatus = await fs?.readFileSync?.(
     path.join(__dirname, "../../../../prisma/queuestatus"),
     "utf8"
   );

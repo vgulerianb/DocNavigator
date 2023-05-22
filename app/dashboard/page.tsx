@@ -6,6 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 import { ProjectsDetail } from "../components/ProjectsDetail";
+export const handleLogout = () => {
+  localStorage.removeItem("access_token");
+  window.location.href = "/";
+};
 
 export default function Dashboard() {
   const [newProjectModal, setNewProjectModal] = useState(false);
@@ -28,7 +32,8 @@ export default function Dashboard() {
           setProjects(res?.data?.data);
         })
         .catch(() => {
-          alert("Something went wrong");
+          handleLogout();
+          alert("Session expired. Please login again.");
         });
     }
   }, []);
@@ -47,8 +52,12 @@ export default function Dashboard() {
           alt={""}
         />
         <div className="flex gap-[16px]">
-          <span>Settings</span>
-          <span className="bold pl-[8px]">Sign out</span>
+          <span
+            onClick={handleLogout}
+            className="bold pl-[8px] text-white cursor-pointer"
+          >
+            Sign out
+          </span>
         </div>
       </div>
       <section className="bg-gray-900 h-full mt-[48px]">
