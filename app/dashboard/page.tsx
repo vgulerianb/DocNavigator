@@ -3,18 +3,15 @@
 import axios from "axios";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
-import { SearchComponent } from "doc-navigator";
-
-const Menus = ["playground", "indexes", "conversations"];
+import { ProjectsDetail } from "../components/ProjectsDetail";
 
 export default function Dashboard() {
   const [newProjectModal, setNewProjectModal] = useState(false);
   const router = useRouter();
   const [projects, setProjects] = useState<any[]>([]);
   const query = useSearchParams();
-  const [menu, setMenu] = useState<string>("playground");
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
@@ -122,30 +119,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="h-full flex gap-[64px]">
-              <div className="w-[250px] bg-gray-800 h-full flex flex-col items-center pt-[24px] gap-[12px]">
-                {Menus.map((val, idx) => (
-                  <div
-                    draggable
-                    key={idx}
-                    onClick={() => {
-                      setMenu(val);
-                    }}
-                    className={`border ${
-                      val === menu ? "border-blue-400" : "border-gray-600"
-                    } hover:bg-blue-900/10 flex flex-col rounded-md bg-gray-900 w-[240px] px-[8px] py-[12px] overflow-hidden cursor-pointer`}
-                  >
-                    <span className="font-bold text-[12px] text-white capitalize">
-                      {val}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <SearchComponent
-                url={window?.location?.origin}
-                projectId={query?.get("id") || ""}
-              />
-            </div>
+            <ProjectsDetail project_id={query?.get("id") ?? ""} />
           )}
         </div>
       </section>
