@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -119,6 +120,15 @@ export default function Login() {
               >
                 {loading ? "Creating..." : "Sign up"}
               </button>
+
+              <div className="flex justify-center">
+                <Link
+                  className="py-[4px] text-blue-500 text-[12px] "
+                  href={"/"}
+                >
+                  Already have an account?
+                </Link>
+              </div>
             </form>
           </div>
         </div>
