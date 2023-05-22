@@ -42,8 +42,9 @@ const handler = async (req: Request): Promise<Response> => {
         match_count: 3,
       }
     );
+    console.log({ chunks });
     if (error) {
-      console.log({ error });
+      console.log({ error, chunks });
       return allowCors(req, new Response("Error", { status: 500 }));
     }
     const prompt = `

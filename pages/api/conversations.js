@@ -20,6 +20,11 @@ const handler = async (req, res) => {
       where: {
         project_id: request?.project_id ? request?.project_id : undefined,
       },
+      select: {
+        query: true,
+        response: true,
+        created_at: true,
+      },
     })
     .catch((error) => {
       console.log(error);

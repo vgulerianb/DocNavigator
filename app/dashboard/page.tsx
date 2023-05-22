@@ -37,9 +37,12 @@ export default function Dashboard() {
     <div className="flex flex-col h-full overflow-hidden">
       <div className="w-full bg-gray-800 flex justify-between p-[16px] fixed">
         <Image
-          src="/next.svg"
-          className="invert"
-          width={120}
+          onClick={() => {
+            router.push("/dashboard");
+          }}
+          className="cursor-pointer"
+          src="/docnavigator.svg"
+          width={140}
           height={28}
           alt={""}
         />

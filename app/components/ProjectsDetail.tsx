@@ -3,6 +3,8 @@ import { SearchComponent } from "doc-navigator";
 import { useState, useRef, useEffect } from "react";
 import { PlaygroundHolder } from "./PlaygroundHolder";
 import { ProjectProcessingState } from "./ProjectProcessingState";
+import { IndexesComponent } from "./IndexesComponent";
+import { ConversationsComponent } from "./ConversationsComponent";
 
 const Menus = [
   "playground",
@@ -96,6 +98,10 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
                 )}
               </div>
             </div>
+          ) : menu === "indexes" ? (
+            <IndexesComponent project_id={project_id} />
+          ) : menu === "conversations" ? (
+            <ConversationsComponent project_id={project_id} />
           ) : (
             <div className="w-full h-full flex justify-center items-center text-[28px] text-white">
               Coming Soon

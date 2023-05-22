@@ -4198,10 +4198,10 @@ dns-packet@^5.2.2:
   dependencies:
     "@leichtgewicht/ip-codec" "^2.0.1"
 
-doc-navigator@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.2.0.tgz#0a5232331c8140f75d9824a40064d7d58702bfa0"
-  integrity sha512-qLfumG5hUhjRp35Q/f9aH1NQQ1Zzw3RUdT2fc1jLDWL6HZ3S7wT2xyQAjRJFRXjGuvqSo6ogIUkR1VA5cPueuA==
+doc-navigator@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.3.2.tgz#16451e288eac05fbf5f2e3a4cb5bd896f8088697"
+  integrity sha512-QcVkzrBR4hC2mF/KVBpFaKhrkOvdKxrmKkqbfDp85gCuUE/Q3b4ftSxJgcwaCouQz1aGlUQMJZXcxFkW4apiag==
   dependencies:
     "@testing-library/jest-dom" "^5.16.5"
     "@testing-library/react" "^13.4.0"
@@ -4210,6 +4210,7 @@ doc-navigator@^0.2.0:
     "@types/node" "^16.18.30"
     "@types/react" "^18.2.6"
     "@types/react-dom" "^18.2.4"
+    axios "^1.4.0"
     prettier "^2.8.8"
     react "^18.2.0"
     react-dom "^18.2.0"

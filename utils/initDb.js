@@ -65,13 +65,12 @@ const initDb = async (prismaConn) => {
   await prisma.$queryRaw`ALTER TABLE "conversations" ADD CONSTRAINT "conversations_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("project_id") ON DELETE NO ACTION ON UPDATE NO ACTION;`;
   await prisma.$queryRaw`ALTER TABLE "taskqueue" ADD CONSTRAINT "taskqueue_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "projects"("project_id") ON DELETE NO ACTION ON UPDATE NO ACTION;`;
   await prisma.$queryRaw`CREATE OR REPLACE FUNCTION public.embeddings_search(project_id text, query_embedding vector, similarity_threshold double precision, match_count integer)
-    RETURNS TABLE(id integer, content_title text, content_url text, content text, content_tokens integer, similarity double precision)
+    RETURNS TABLE(content_title text, content_url text, content text, content_tokens integer, similarity double precision)
     LANGUAGE plpgsql
    AS $function$
    BEGIN
      RETURN QUERY
      SELECT
-       embeddings.id,
        embeddings.content_title,
        embeddings.content_url,
        embeddings.content,
