@@ -4198,10 +4198,10 @@ dns-packet@^5.2.2:
   dependencies:
     "@leichtgewicht/ip-codec" "^2.0.1"
 
-doc-navigator@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.3.2.tgz#16451e288eac05fbf5f2e3a4cb5bd896f8088697"
-  integrity sha512-QcVkzrBR4hC2mF/KVBpFaKhrkOvdKxrmKkqbfDp85gCuUE/Q3b4ftSxJgcwaCouQz1aGlUQMJZXcxFkW4apiag==
+doc-navigator@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.3.3.tgz#ee261dba40bbb94094a01c6bb46ce1890795bbc9"
+  integrity sha512-aOSTMap37jnap3Lu5omxRyQrHOaCbqVrdrjClJhkh7M85Oh3X8X4KA2WXieHEHcGIgpqVGb5MuSyNz7/W3Qs9w==
   dependencies:
     "@testing-library/jest-dom" "^5.16.5"
     "@testing-library/react" "^13.4.0"
