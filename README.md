@@ -1,34 +1,66 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DocNavigator
 
-## Getting Started
+DocNavigator is an AI-powered chatbot builder that is designed to improve the user experience on product documentation/support websites. It can be trained on the data available on the company's website, making it a scalable solution for organizations of any size.
 
-First, run the development server:
+With its ability to handle multiple queries at once, DocNavigator can save customers time and boost productivity, all while improving customer satisfaction.
+
+To get started with this project, you will need to create a `.env` file. An example `.env` file can be found in the `example.env`. The `.env` file accepts the following variables:
+
+- `APP_URL`: The root path where your app is hosted. say https://localhost:3000
+- `OPENAI_API_KEY`: The API key for OpenAI.
+- `NEXT_PUBLIC_SUPABASE_URL`: The URL for your Supabase instance. //Create new project on supabase for this
+- `SUPABASE_SERVICE_ROLE_KEY`: The service role key for your Supabase instance. //Create new project on supabase for this
+- `APP_SECRET`: The secret key for signing JWT tokens.
+- `USER_SIGNUP_LIMIT`: The limit for additional signups.
+- `DATABASE_URL`: The connection string for your Supabase database. //Create new project on supabase for this
+
+Before building and running the Docker container, you will need to initialize the database by running the following command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+# Initialize the database
+yarn run initDb
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will create the necessary tables and data in your Supabase database.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Once you have created your `.env` file and initialized the database, you can run the following commands to start the project:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Use docker
 
-## Learn More
+```bash
+# Build the Docker image
+docker build -t doc-navigator .
 
-To learn more about Next.js, take a look at the following resources:
+# Run the Docker container
+docker run -p 3000:3000 doc-navigator
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Or start locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+# Install dependencies
+yarn install
 
-## Deploy on Vercel
+# Build the application
+yarn build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Start the webapp
+yarn start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This will run the app, exposing port 3000 for the application. You can then access the application by navigating to `http://localhost:3000` in your web browser.
+
+## Contributing
+
+If you would like to contribute to this project, please follow these steps:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/my-new-feature`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin feature/my-new-feature`)
+6. Create a new Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
