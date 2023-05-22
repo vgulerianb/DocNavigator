@@ -23,10 +23,12 @@ const handler = async (req, res) => {
       .findMany({
         where: {
           created_by: userEmail,
+          project_id: request?.project_id ? request?.project_id : undefined,
         },
         select: {
           project_name: true,
           project_id: true,
+          status: true,
         },
       })
       .catch((error) => {

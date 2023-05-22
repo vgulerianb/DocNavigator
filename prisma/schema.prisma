@@ -15,12 +15,14 @@ model embeddings {
   content_title  String?
   content_url    String?
   content        String?
-  content_tokens BigInt?
+  content_tokens Int?
+  url_id         String?
   project_id     String
   embedding      Unsupported("vector")?
   meta           String?
-  url_id         String?
   projects       projects               @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([content, project_id])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
