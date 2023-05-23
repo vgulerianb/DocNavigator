@@ -12,6 +12,9 @@ cron.schedule("* * * * *", async function () {
         .then((res) => res.json())
         .then((data) => {
           console.log("data", data);
+        })
+        .catch((e) => {
+          console.log("error", e);
         });
   }
 });

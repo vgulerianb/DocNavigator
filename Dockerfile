@@ -15,7 +15,7 @@ WORKDIR /docnavigator
 COPY --from=builder /docnavigator .
 
 # Copy .env if it exists
-COPY --from=builder /docnavigator/.env* ./
+# COPY --from=builder /docnavigator/.env* ./
 
 EXPOSE 3000
 
