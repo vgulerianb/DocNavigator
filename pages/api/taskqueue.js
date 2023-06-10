@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 const prisma = new PrismaClient();
-const urlLimit = 30;
+const urlLimit = 100;
 const handler = async (req, res) => {
   const params = req.params;
   const queryParams = req.query;

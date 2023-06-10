@@ -1,5 +1,6 @@
 import { verifyToken } from "../../utils";
 import { PrismaClient } from "@prisma/client";
+import { haveProjectAccess } from "../../app/services/conversation.services";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,12 @@ const handler = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid request" });
   }
   const userEmail = user?.email;
+  await haveProjectAccess(prisma, request?.project_id, userEmail).catch(
+    (err) => {
+      console.log(err);
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+  );
   const conversations = await prisma.conversations
     .findMany({
       where: {
@@ -25,14 +32,28 @@ const handler = async (req, res) => {
         response: true,
         created_at: true,
         meta: true,
+        session_id: true,
       },
     })
     .catch((error) => {
       console.log(error);
       return res.status(400).json({ success: false, message: error.message });
     });
-  console.log(conversations);
-  return res.status(200).json({ success: true, data: conversations });
+
+  const sessions = {};
+  conversations.forEach((conversation) => {
+    const { session_id, ...rest } = conversation;
+    if (session_id in sessions) {
+      sessions[session_id].conversations.push(rest);
+    } else {
+      sessions[session_id] = {
+        session: session_id,
+        conversations: [rest],
+      };
+    }
+  });
+
+  return res.status(200).json({ success: true, data: Object.values(sessions) });
 };
 
 export default handler;
