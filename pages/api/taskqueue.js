@@ -22,8 +22,15 @@ const handler = async (req, res) => {
       .json({ success: true, data: [], msg: "queue is not running" });
   const projects = await prisma.projects.findMany({
     where: {
-      status: "processing",
       project_id: project_id ? project_id : undefined,
+      OR: [
+        {
+          status: "processing",
+        },
+        {
+          status: "reprocessing",
+        },
+      ],
     },
     take: 5,
   });

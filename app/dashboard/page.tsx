@@ -22,21 +22,26 @@ export default function Dashboard() {
     if (!accessToken) {
       router.push("/");
     } else {
-      axios
-        .get("/api/project", {
-          headers: {
-            Authorization: `${accessToken}`,
-          },
-        })
-        .then((res) => {
-          setProjects(res?.data?.data);
-        })
-        .catch(() => {
-          handleLogout();
-          alert("Session expired. Please login again.");
-        });
+      getProjects();
     }
   }, []);
+
+  const getProjects = () => {
+    const accessToken = localStorage.getItem("access_token");
+    axios
+      .get("/api/project", {
+        headers: {
+          Authorization: `${accessToken}`,
+        },
+      })
+      .then((res) => {
+        setProjects(res?.data?.data);
+      })
+      .catch(() => {
+        handleLogout();
+        alert("Session expired. Please login again.");
+      });
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -63,6 +68,7 @@ export default function Dashboard() {
       <section className="bg-gray-900 h-full mt-[48px]">
         {newProjectModal ? (
           <NewProjectsModal
+            refresh={getProjects}
             onClose={() => {
               setNewProjectModal(false);
             }}

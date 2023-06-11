@@ -1,44 +1,51 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const NewProjectsModal = ({
+export const AddUrlModal = ({
   onClose,
-  refresh,
+  project_id,
+  existingUrls,
+  refreshIndexes,
 }: {
   onClose: () => void;
-  refresh: () => void;
+  project_id: string;
+  existingUrls: string[];
+  refreshIndexes: () => void;
 }) => {
   const [mode, setMode] = useState<"sitemap" | "list" | "csv" | "nav">(
     "sitemap"
   );
   const [urls, setUrls] = useState<string[]>([]);
-  const [name, setName] = useState<string>("");
+  const [allUrls, setAllUrls] = useState<string[]>([]);
   const [urlList, setUrlList] = useState<string>("");
   const [sitemapUrl, setSitemapUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [navUrl, setNavUrl] = useState<string>("");
+  const [urlsFetching, setUrlsFetching] = useState<boolean>(false);
 
   const getUrls = (file: File) => {
     const reader = new FileReader();
     reader.onload = function (e) {
       const text = reader.result as string;
-      setUrls(text?.replaceAll(" ", "")?.split(","));
+      setAllUrls(text?.replaceAll(" ", "")?.split(","));
     };
     reader.readAsText(file);
   };
 
-  //   get urls from sitemap
+  //   get allUrls from sitemap
   const getSitemapUrls = () => {
-    const accessToken = localStorage.getItem("access_token");
     fetch(`/api/getUrls?url=${sitemapUrl}`)
       .then((res) => res.json())
       .then((data: { message: string; success: boolean; data: string[] }) => {
         if (!data?.success) alert(data?.message);
-        const urls = data.data as string[];
-        setUrls(urls ?? []);
+        const allUrls = data.data as string[];
+        setAllUrls(allUrls ?? []);
       })
       .catch(() => {
         alert("Something went wrong");
+      })
+      .finally(() => {
+        setUrlsFetching(false);
       });
   };
 
@@ -47,20 +54,23 @@ export const NewProjectsModal = ({
       .then((res) => res.json())
       .then((data: { message: string; success: boolean; data: string[] }) => {
         if (!data?.success) alert(data?.message);
-        const urls = data.data as string[];
-        setUrls(urls ?? []);
+        const allUrls = data.data as string[];
+        setAllUrls(allUrls ?? []);
       })
       .catch(() => {
         alert("Something went wrong");
+      })
+      .finally(() => {
+        setUrlsFetching(false);
       });
   };
 
-  const createProject = () => {
+  const addUrlsToProject = () => {
     setLoading(true);
     axios
       .post(
-        "/api/project",
-        { projectName: name, urls },
+        "/api/addUrls",
+        { project_id: project_id, urls: urls },
         {
           headers: {
             Authorization: `${localStorage.getItem("access_token")}`,
@@ -80,9 +90,14 @@ export const NewProjectsModal = ({
       })
       .finally(() => {
         setLoading(false);
-        refresh();
+        refreshIndexes();
       });
   };
+
+  useEffect(() => {
+    const newUrls = allUrls.filter((url) => !existingUrls.includes(url));
+    setUrls(newUrls);
+  }, [allUrls]);
 
   return (
     <div
@@ -98,7 +113,7 @@ export const NewProjectsModal = ({
         >
           <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              New Project
+              Add URLs
             </h3>
             <button
               onClick={() => onClose()}
@@ -121,24 +136,6 @@ export const NewProjectsModal = ({
             </button>
           </div>
           <div className="flex flex-col p-6">
-            <div className="mb-[16px]">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Project Name
-              </label>
-              <input
-                autoFocus
-                type="text"
-                name="name"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter project name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              />
-            </div>
             <div className=" flex gap-[16px] items-center">
               <div
                 onClick={() => {
@@ -208,12 +205,14 @@ export const NewProjectsModal = ({
                   placeholder="https://example.com/sitemap.xml"
                 />
                 <button
+                  disabled={urlsFetching}
                   onClick={() => {
+                    setUrlsFetching(true);
                     getSitemapUrls();
                   }}
                   className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
                 >
-                  Get URLs
+                  {urlsFetching ? "Please wait" : "Get URLs"}
                 </button>
               </div>
             ) : mode === "nav" ? (
@@ -226,12 +225,14 @@ export const NewProjectsModal = ({
                   placeholder="https://example.com/docs"
                 />
                 <button
+                  disabled={urlsFetching}
                   onClick={() => {
+                    setUrlsFetching(true);
                     getNavUrls();
                   }}
                   className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
                 >
-                  Get URLs
+                  {urlsFetching ? "Please wait" : "Get URLs"}
                 </button>
               </div>
             ) : mode === "csv" ? (
@@ -248,7 +249,7 @@ export const NewProjectsModal = ({
                 value={urlList}
                 onChange={(e) => {
                   setUrlList(e.target.value?.replace(" ", ""));
-                  setUrls(e.target.value?.split(","));
+                  setAllUrls(e.target.value?.split(","));
                 }}
                 type="text"
                 name="list"
@@ -256,24 +257,35 @@ export const NewProjectsModal = ({
                 placeholder="https://example.com/,https://example.com/about"
               />
             )}
-            <div className="text-green-500 pt-[16px] text-sm">
-              {urls?.length} URLs found
-            </div>
+            {urls?.length ? (
+              <div className="text-green-500 pt-[16px] text-sm">
+                {urls?.length} New URLs found
+              </div>
+            ) : (
+              ""
+            )}
+            {allUrls?.length ? (
+              <div className="text-red-500 pt-[16px] text-sm">
+                {allUrls?.length - urls?.length} Duplicate URLs found
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button
-              disabled={loading || !urls?.length || !name}
+              disabled={loading || !urls?.length}
               onClick={() => {
-                createProject();
+                addUrlsToProject();
               }}
               type="button"
               className={`text-white ${
-                loading || !urls?.length || !name
+                loading || !urls?.length
                   ? "bg-gray-500 cursor-not-allowed"
                   : "bg-gray-800"
               } focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center `}
             >
-              {loading ? "Creating..." : "Create"}
+              {loading ? "Adding..." : "Add"}
             </button>
             <button
               onClick={onClose}

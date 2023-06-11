@@ -2,9 +2,11 @@ import axios from "axios";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import LoadingSvg from "../SvgComps/loading";
+import { AddUrlModal } from "./AddUrlModal";
 
 export const IndexesComponent = ({ project_id }: { project_id: string }) => {
   const [loading, setLoading] = useState(true);
+  const [addUrlModal, setAddUrlModal] = useState(false);
   const [indexes, setIndexes] = useState<
     {
       url_id: string;
@@ -13,6 +15,10 @@ export const IndexesComponent = ({ project_id }: { project_id: string }) => {
     }[]
   >([]);
   useEffect(() => {
+    fetchIndexes();
+  }, []);
+
+  const fetchIndexes = () => {
     const accessToken = localStorage.getItem("access_token");
     axios
       .get("api/indexes?project_id=" + project_id, {
@@ -34,11 +40,36 @@ export const IndexesComponent = ({ project_id }: { project_id: string }) => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  };
+
   return (
     <>
-      <h1 className="font-bold text-white">Indexed Urls ({indexes?.length})</h1>
-      <div className="flex flex-col gap-[16px] overflow-scroll h-full">
+      {addUrlModal ? (
+        <AddUrlModal
+          refreshIndexes={fetchIndexes}
+          project_id={project_id}
+          existingUrls={indexes?.map((val) => val.content_url)}
+          onClose={() => {
+            setAddUrlModal(false);
+          }}
+        />
+      ) : (
+        ""
+      )}
+      <div className="flex justify-between py-[4px]">
+        <h1 className="font-bold text-white">
+          Indexed Urls ({indexes?.length})
+        </h1>
+        <button
+          onClick={() => {
+            setAddUrlModal(true);
+          }}
+          className="bg-blue-500 rounded-md px-[8px] py-[4px] text-white"
+        >
+          Add Url <span className="text-white">+</span>
+        </button>
+      </div>
+      <div className="flex flex-col gap-[16px] overflow-scroll h-[calc(100%-90px)]">
         {loading ? (
           <div className="flex flex-col items-center gap-[8px] text-white mt-[64px]">
             <LoadingSvg />

@@ -41,7 +41,7 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
         },
       })
       .then((res) => {
-        if (res.data?.data?.[0]?.status === "completed") {
+        if (res.data?.data?.[0]?.status !== "processing") {
           setLoading(false);
           clearInterval(interval.current);
         } else if (!res.data?.data?.[0]) {

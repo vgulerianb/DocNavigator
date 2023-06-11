@@ -5,7 +5,7 @@ const supabaseClient = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
 );
 
-export const haveProjectAccess = (
+export const haveProjectAccess = async (
   prisma: {
     projects: {
       findFirst: (arg0: { where: { project_id: any; created_by: any } }) => any;
@@ -15,12 +15,17 @@ export const haveProjectAccess = (
   email: any
 ) => {
   console.log("haveProjectAccess", project_id, email);
-  return prisma.projects.findFirst({
+  const project = await prisma.projects.findFirst({
     where: {
       project_id: project_id,
       created_by: email,
     },
   });
+  if (project) {
+    return project;
+  } else {
+    throw new Error("Project not found");
+  }
 };
 
 export const OpenAIstream = async (
