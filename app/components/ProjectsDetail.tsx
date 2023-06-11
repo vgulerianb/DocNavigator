@@ -5,6 +5,7 @@ import { PlaygroundHolder } from "./PlaygroundHolder";
 import { ProjectProcessingState } from "./ProjectProcessingState";
 import { IndexesComponent } from "./IndexesComponent";
 import { ConversationsComponent } from "./ConversationsComponent";
+import { useRouter } from "next/navigation";
 
 const Menus = [
   "playground",
@@ -18,6 +19,7 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(true);
   const interval = useRef<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -57,6 +59,28 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
     }
   };
 
+  const deleteProject = async () => {
+    const accessToken = localStorage.getItem("access_token");
+    axios
+      .put(
+        "api/deleteProject",
+        {
+          project_id: project_id,
+        },
+        {
+          headers: {
+            Authorization: `${accessToken}`,
+          },
+        }
+      )
+      .then(() => {
+        router.push("/dashboard");
+      })
+      .catch(() => {
+        alert("Something went wrong");
+      });
+  };
+
   return (
     <>
       <div className="h-full flex ">
@@ -77,6 +101,16 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
               </span>
             </div>
           ))}
+          <div
+            onClick={() => {
+              // confirm("Are you sure you want to delete this project?") &&
+              confirm("Are you sure you want to delete this project?") &&
+                deleteProject();
+            }}
+            className="text-red-600 cursor-pointer mt-auto py-[16px]"
+          >
+            Delete Project
+          </div>
         </div>
         <div className="h-full w-full relative p-[32px]">
           {loading ? <ProjectProcessingState /> : ""}

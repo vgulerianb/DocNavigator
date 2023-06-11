@@ -24,6 +24,9 @@ const handler = async (req, res) => {
         where: {
           created_by: userEmail,
           project_id: request?.project_id ? request?.project_id : undefined,
+          status: {
+            notIn: ["deleted"],
+          },
         },
         select: {
           project_name: true,
