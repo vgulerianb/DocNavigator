@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NewProjectsModal } from "../components/NewProjectsModal";
 import { ProjectsDetail } from "../components/ProjectsDetail";
@@ -137,7 +137,10 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <ProjectsDetail project_id={query?.get("id") ?? ""} />
+            <ProjectsDetail
+              project_id={query?.get("id") ?? ""}
+              refresh={getProjects}
+            />
           )}
         </div>
       </section>

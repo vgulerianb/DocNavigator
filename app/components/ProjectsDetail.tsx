@@ -14,7 +14,13 @@ const Menus = [
   "reports",
   "customize model",
 ];
-export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
+export const ProjectsDetail = ({
+  project_id,
+  refresh,
+}: {
+  project_id: string;
+  refresh: () => void;
+}) => {
   const [menu, setMenu] = useState<string>("playground");
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -74,6 +80,7 @@ export const ProjectsDetail = ({ project_id }: { project_id: string }) => {
         }
       )
       .then(() => {
+        refresh();
         router.push("/dashboard");
       })
       .catch(() => {

@@ -17,6 +17,7 @@ export const NewProjectsModal = ({
   const [sitemapUrl, setSitemapUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [navUrl, setNavUrl] = useState<string>("");
+  const [urlsFetching, setUrlsFetching] = useState<boolean>(false);
 
   const getUrls = (file: File) => {
     const reader = new FileReader();
@@ -39,6 +40,9 @@ export const NewProjectsModal = ({
       })
       .catch(() => {
         alert("Something went wrong");
+      })
+      .finally(() => {
+        setUrlsFetching(false);
       });
   };
 
@@ -52,6 +56,9 @@ export const NewProjectsModal = ({
       })
       .catch(() => {
         alert("Something went wrong");
+      })
+      .finally(() => {
+        setUrlsFetching(false);
       });
   };
 
@@ -209,11 +216,12 @@ export const NewProjectsModal = ({
                 />
                 <button
                   onClick={() => {
+                    setUrlsFetching(true);
                     getSitemapUrls();
                   }}
                   className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
                 >
-                  Get URLs
+                  {urlsFetching ? "Please wait" : "Get URLs"}
                 </button>
               </div>
             ) : mode === "nav" ? (
@@ -227,11 +235,12 @@ export const NewProjectsModal = ({
                 />
                 <button
                   onClick={() => {
+                    setUrlsFetching(true);
                     getNavUrls();
                   }}
                   className="h-[48px] inline-flex justify-center items-center px-4 py-2 text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 "
                 >
-                  Get URLs
+                  {urlsFetching ? "Please wait" : "Get URLs"}
                 </button>
               </div>
             ) : mode === "csv" ? (
