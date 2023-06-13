@@ -1,8 +1,6 @@
 # DocNavigator
 
 
-https://github.com/vgulerianb/DocNavigator/assets/90599235/82d16462-5494-4dde-a9b6-6d1eb5d74440
-
 DocNavigator is an AI-powered chatbot builder that is designed to improve the user experience on product documentation/support websites. It can be trained on the data available on the company's website, making it a scalable solution for organizations of any size.
 
 With its ability to handle multiple queries at once, DocNavigator can save customers time and boost productivity, all while improving customer satisfaction.
