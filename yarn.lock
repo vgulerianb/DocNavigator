@@ -4190,10 +4190,10 @@ dns-packet@^5.2.2:
   dependencies:
     "@leichtgewicht/ip-codec" "^2.0.1"
 
-doc-navigator@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.4.0.tgz#f378f03744e8596c5b10ff8037e484ed9d0c6e63"
-  integrity sha512-jA0yxteuM0/hMtYoyWOrCbTOdpI9SB4K7njULxYpBvH4pAaz6TJnMplPzk4epEyYxTct4hJamz1FEE4chI2huQ==
+doc-navigator@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.4.1.tgz#f6b5579be35b903202fa7e39c0da07bc70f96ccf"
+  integrity sha512-YWnVw5mmoQm9/J3DDIvxTyd0mXVBZtvZBwvUbtj+aHlKnqrrZAHAsZp+cbSi6uM7myFMfSmK0PcSes/sFb1gEw==
   dependencies:
     "@types/node" "^16.18.30"
     "@types/react" "^18.2.6"

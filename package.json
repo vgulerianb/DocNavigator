@@ -18,7 +18,7 @@
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
-    "doc-navigator": "^0.4.0",
+    "doc-navigator": "^0.4.1",
     "eslint": "8.39.0",
     "eslint-config-next": "13.4.1",
     "eventsource-parser": "^1.0.0",
