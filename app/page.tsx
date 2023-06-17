@@ -115,6 +115,18 @@ export default function Login() {
             </form>
           </div>
         </div>
+        <div className="w-full flex justify-center mt-[8px]">
+          <a
+            href="https://www.producthunt.com/posts/docnavigator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-docnavigator"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=400035&theme=dark"
+              alt="DocNavigator - Illuminating&#0032;paths&#0032;to&#0032;effortless&#0032;documentation&#0032;experiences | Product Hunt"
+              style={{ width: "250px", height: "54px" }}
+            />
+          </a>
+        </div>{" "}
       </div>
     </section>
   );
