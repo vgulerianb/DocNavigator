@@ -63,6 +63,10 @@ If you would like to contribute to this project, please follow these steps:
 5. Push to the branch (`git push origin feature/my-new-feature`)
 6. Create a new Pull Request
 
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=vgulerianb/docnavigator&type=Date)](https://star-history.com/#vgulerianb/docnavigator&Date)
+
+
 ## License
 
 This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
