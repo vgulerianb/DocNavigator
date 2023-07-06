@@ -34,6 +34,14 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <title>DocNavigator | Copilot for Docs</title>
+        <meta
+          name="description"
+          content="AI-powered chatbot builder that is designed to improve the user experience on product documentation/support websites"
+        />
+      </head>
       <body className={inter.className + " dark h-screen"}>
         {alertMessage ? (
           <div

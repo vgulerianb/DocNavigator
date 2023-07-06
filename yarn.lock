@@ -4210,10 +4210,10 @@ dns-packet@^5.2.2:
   dependencies:
     "@leichtgewicht/ip-codec" "^2.0.1"
 
-doc-navigator@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.4.5.tgz#473ae2a102d54351826a20194d87990045f44ea4"
-  integrity sha512-OcjP7bNjkw6UHh/rXvoMSJYH6xHaY3DeEYDzQgqIMH5dsr+3sxopw8kdJGxeWUkeVwJNwZ40KfpmCRuG0XONzw==
+doc-navigator@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/doc-navigator/-/doc-navigator-0.4.6.tgz#ebeda2fc35e9066e8f49532d041a53504a3f12df"
+  integrity sha512-ILhqtogrQ1OCUWSj34SWhGyXVeV5b27JFiYcyN6I1T0dB5zdeklA/mc+j+Fz+KJBarRWRC+tOqdMHbB0yrwltQ==
   dependencies:
     "@types/node" "^16.18.30"
     "@types/react" "^18.2.6"

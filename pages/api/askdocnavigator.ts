@@ -49,7 +49,8 @@ const handler = async (req: Request): Promise<Response> => {
       return allowCors(req, new Response("Error", { status: 500 }));
     }
     const prompt = `
-    Use the following text to answer the question.Question is "${query}"
+    Question is "${query}"
+    Documentation section:
     ${chunks.map((chunk: { content: string }) => chunk.content).join("\n")}
     `;
     const stream = chunks?.length
