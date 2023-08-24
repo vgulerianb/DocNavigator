@@ -11,15 +11,7 @@ const handler = async (req, res) => {
   const bodyParams = req.body;
   const request = { ...params, ...queryParams, ...bodyParams };
   let project_id = request?.project_id;
-  // TODO: improve this
-  const queuseStatus = await fs?.readFileSync?.(
-    path.join(__dirname, "../../../../prisma/queuestatus"),
-    "utf8"
-  );
-  if (!queuseStatus?.includes("true"))
-    return res
-      .status(200)
-      .json({ success: true, data: [], msg: "queue is not running" });
+
   const projects = await prisma.projects.findMany({
     where: {
       project_id: project_id ? project_id : undefined,
@@ -72,10 +64,10 @@ const handler = async (req, res) => {
       await generateEmbeddings(prisma, data);
     }
   } else {
-    await fs.writeFileSync(
-      path.join(__dirname, "../../../../prisma/queuestatus"),
-      "false"
-    );
+    // await fs.writeFileSync(
+    //   path.join(__dirname, "../../../../prisma/queuestatus"),
+    //   "false"
+    // );
     res.status(200).json({ success: true, data: [] });
   }
   res.status(200).json({ success: true, data: [] });
