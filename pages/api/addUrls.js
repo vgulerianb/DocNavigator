@@ -27,10 +27,10 @@ const handler = async (req, res) => {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   });
   console.log("project", project);
-  await fs.writeFileSync(
-    path.join(__dirname, "../../../../prisma/queuestatus"),
-    "true"
-  );
+  // await fs.writeFileSync(
+  //   path.join(__dirname, "../../../../prisma/queuestatus"),
+  //   "true"
+  // );
   await prisma.projects.update({
     where: {
       project_id: request?.project_id,

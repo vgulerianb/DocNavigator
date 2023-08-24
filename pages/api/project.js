@@ -43,10 +43,10 @@ const handler = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
-    await fs.writeFileSync(
-      path.join(__dirname, "../../../../prisma/queuestatus"),
-      "true"
-    );
+    // await fs.writeFileSync(
+    //   path.join(__dirname, "../../../../prisma/queuestatus"),
+    //   "true"
+    // );
     const creationStatus = await prisma.projects.create({
       data: {
         project_name: request?.projectName?.trim(),
